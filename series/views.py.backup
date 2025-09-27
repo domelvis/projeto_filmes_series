@@ -1,0 +1,158 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.db.models import Q
+from .models import Serie
+from .forms import SerieForm
+
+
+class SerieListView(ListView):
+    """
+    View para listar todas as séries com funcionalidade de busca e filtro por gênero.
+    """
+    model = Serie
+    template_name = 'series/list.html'
+    context_object_name = 'series'
+    paginate_by = 12
+    
+    def get_queryset(self):
+        """Filtra as séries baseado na busca e gênero."""
+        # Ordena as séries por título por padrão para uma lista consistente
+        queryset = Serie.objects.all().order_by('titulo') 
+        search = self.request.GET.get('search')
+        genero = self.request.GET.get('genero')
+        
+        if search:
+            queryset = queryset.filter(
+                Q(titulo__icontains=search) | 
+                Q(descricao__icontains=search)
+            )
+        
+        if genero:
+            queryset = queryset.filter(genero=genero)
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona dados extras (gêneros e termos de busca) ao contexto."""
+        context = super().get_context_data(**kwargs)
+        # Assumindo que Serie.GENERO_CHOICES está definido no seu modelo
+        context['generos'] = Serie.GENERO_CHOICES
+        context['search'] = self.request.GET.get('search', '')
+        context['genero_selecionado'] = self.request.GET.get('genero', '')
+        return context
+
+
+class SerieDetailView(DetailView):
+    """
+    View para exibir os detalhes de uma série.
+    """
+    model = Serie
+    template_name = 'series/detail.html'
+    context_object_name = 'serie'
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona séries relacionadas ao contexto."""
+        context = super().get_context_data(**kwargs)
+        serie = self.get_object()
+        
+        # Busca séries do mesmo gênero, excluindo a atual
+        series_relacionadas = Serie.objects.filter(
+            genero=serie.genero
+        ).exclude(pk=serie.pk).order_by('-avaliacao_media')[:4] # Ordena por avaliação
+        
+        context['series_relacionadas'] = series_relacionadas
+        return context
+
+
+class SerieCreateView(LoginRequiredMixin, CreateView):
+    """
+    View para criar uma nova série. Requer que o usuário esteja logado.
+    """
+    model = Serie
+    form_class = SerieForm
+    template_name = 'series/form.html'
+    success_url = reverse_lazy('series:home')
+    
+    def form_valid(self, form):
+        """Define o usuário logado como criador e exibe mensagem de sucesso."""
+        form.instance.criado_por = self.request.user
+        messages.success(self.request, 'Série criada com sucesso!')
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona títulos específicos da página ao contexto."""
+        context = super().get_context_data(**kwargs)
+        context['titulo_pagina'] = 'Criar Nova Série'
+        context['botao_submit'] = 'Criar Série'
+        return context
+
+
+class SerieUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    View para editar uma série existente. Requer que o usuário seja o criador.
+    """
+    model = Serie
+    form_class = SerieForm
+    template_name = 'series/form.html'
+    success_url = reverse_lazy('series:home')
+    
+    def dispatch(self, request, *args, **kwargs):
+        """Verifica permissão: apenas o criador pode editar."""
+        serie = self.get_object()
+        if serie.criado_por != request.user:
+            messages.error(request, 'Você não tem permissão para editar esta série.')
+            return redirect('series:detail', pk=serie.pk)
+        return super().dispatch(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        """Exibe mensagem de sucesso após a atualização."""
+        messages.success(self.request, 'Série atualizada com sucesso!')
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona títulos específicos da página ao contexto."""
+        context = super().get_context_data(**kwargs)
+        context['titulo_pagina'] = 'Editar Série'
+        context['botao_submit'] = 'Atualizar Série'
+        return context
+
+
+class SerieDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    View para deletar uma série. Requer que o usuário seja o criador.
+    """
+    model = Serie
+    template_name = 'series/confirm_delete.html'
+    success_url = reverse_lazy('series:home')
+    
+    def dispatch(self, request, *args, **kwargs):
+        """Verifica permissão: apenas o criador pode deletar."""
+        serie = self.get_object()
+        if serie.criado_por != request.user:
+            messages.error(request, 'Você não tem permissão para deletar esta série.')
+            return redirect('series:detail', pk=serie.pk)
+        return super().dispatch(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        """Executa a exclusão e exibe mensagem de sucesso."""
+        messages.success(request, 'Série deletada com sucesso!')
+        return super().delete(request, *args, **kwargs)
+
+
+def home(request):
+    """
+    View para a página inicial, exibindo as séries mais recentes.
+    """
+    # 🌟 MELHORIA: Usa .order_by('-data_criacao') para garantir que as 6 séries
+    # sejam realmente as mais recentes. Ajuste 'data_criacao' para o nome do campo correto.
+    series_recentes = Serie.objects.all().order_by('-data_criacao')[:6]
+    
+    context = {
+        'series_recentes': series_recentes,
+        'generos': Serie.GENERO_CHOICES,
+    }
+    return render(request, 'series/home.html', context)

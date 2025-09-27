@@ -1,0 +1,687 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil - {{ user.username }} - Plataforma Séries TV{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Perfil de {{ user.username }} na Plataforma Séries TV. Confira séries criadas, estatísticas e informações do usuário.">
+{% endblock %}
+
+{% block body_class %}profile-page{% endblock %}
+{% block page_id %}user-profile{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active" aria-current="page">
+    <i class="bi bi-person"></i> Meu Perfil
+</li>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section do Perfil -->
+<section class="profile-hero" role="banner">
+    <div class="hero-background"></div>
+    <div class="hero-overlay"></div>
+    
+    <div class="container">
+        <div class="hero-content">
+            <!-- Avatar e Informações Básicas -->
+            <div class="profile-identity">
+                <div class="avatar-section">
+                    <div class="avatar-container">
+                        {% if profile.avatar %}
+                            <img src="{{ profile.avatar.url }}" 
+                                 class="profile-avatar" 
+                                 alt="Avatar de {{ user.username }}"
+                                 width="120" 
+                                 height="120">
+                        {% else %}
+                            <div class="avatar-placeholder">
+                                <span class="avatar-initials">{{ user.username|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="avatar-badge online" title="Usuário online"></div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="profile-header">
+                        <h1 class="profile-username">{{ user.username }}</h1>
+                        {% if user.first_name or user.last_name %}
+                            <p class="profile-fullname">{{ user.first_name }} {{ user.last_name }}</p>
+                        {% endif %}
+                        
+                        <!-- Badges do Usuário -->
+                        <div class="profile-badges">
+                            {% if user.is_staff %}
+                            <span class="badge badge--staff" title="Equipe da plataforma">
+                                <i class="bi bi-star-fill"></i> Staff
+                            </span>
+                            {% endif %}
+                            <span class="badge badge--member" title="Membro desde {{ user.date_joined|date:'d/m/Y' }}">
+                                <i class="bi bi-award"></i> Membro
+                            </span>
+                            {% if user.serie_set.count > 10 %}
+                            <span class="badge badge--contributor" title="Grande contribuidor">
+                                <i class="bi bi-trophy"></i> Contribuidor
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Informações de Contato -->
+                    <div class="contact-info">
+                        {% if user.email %}
+                        <div class="contact-item">
+                            <i class="bi bi-envelope"></i>
+                            <span class="contact-text">{{ user.email }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if profile.website %}
+                        <div class="contact-item">
+                            <i class="bi bi-globe"></i>
+                            <a href="{{ profile.website }}" target="_blank" class="contact-link">
+                                {{ profile.website|truncatechars:30 }}
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Ações do Perfil -->
+                    <div class="profile-actions">
+                        <a href="{% url 'users:profile_edit' %}" class="btn btn--primary btn--profile">
+                            <i class="bi bi-pencil"></i>
+                            Editar Perfil
+                        </a>
+                        <a href="{% url 'series:create' %}" class="btn btn--outline btn--profile">
+                            <i class="bi bi-plus-circle"></i>
+                            Adicionar Série
+                        </a>
+                        <div class="action-dropdown">
+                            <button class="btn btn--ghost btn--profile" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'users:password_change' %}">
+                                        <i class="bi bi-shield-lock"></i> Alterar Senha
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/minha-lista">
+                                        <i class="bi bi-bookmark"></i> Minha Lista
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="/configuracoes">
+                                        <i class="bi bi-gear"></i> Configurações
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Conteúdo Principal do Perfil -->
+<main class="profile-main" role="main">
+    <div class="container">
+        <div class="profile-layout">
+            <!-- Sidebar com Estatísticas -->
+            <aside class="profile-sidebar">
+                <!-- Cartão de Estatísticas -->
+                <div class="stats-card">
+                    <h3 class="stats-title">
+                        <i class="bi bi-graph-up"></i>
+                        Estatísticas
+                    </h3>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-collection-play"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number">{{ user.serie_set.count }}</span>
+                                <span class="stat-label">Séries Criadas</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-heart"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number">{{ user.favoritos.count|default:0 }}</span>
+                                <span class="stat-label">Favoritos</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-chat-left"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number">{{ user.comentario_set.count|default:0 }}</span>
+                                <span class="stat-label">Comentários</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-calendar"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number">{{ membership_days }}</span>
+                                <span class="stat-label">Dias como Membro</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações da Conta -->
+                <div class="info-card">
+                    <h3 class="info-title">
+                        <i class="bi bi-info-circle"></i>
+                        Informações da Conta
+                    </h3>
+                    
+                    <div class="info-list">
+                        <div class="info-item">
+                            <i class="bi bi-person-badge"></i>
+                            <div class="info-content">
+                                <span class="info-label">Tipo de Conta</span>
+                                <span class="info-value">
+                                    {% if user.is_staff %}
+                                        Administrador
+                                    {% else %}
+                                        Membro
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="bi bi-calendar-plus"></i>
+                            <div class="info-content">
+                                <span class="info-label">Membro desde</span>
+                                <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="bi bi-clock-history"></i>
+                            <div class="info-content">
+                                <span class="info-label">Último acesso</span>
+                                <span class="info-value">
+                                    {% if user.last_login %}
+                                        {{ user.last_login|date:"d/m/Y H:i" }}
+                                    {% else %}
+                                        Nunca acessou
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Atividade Recente -->
+                <div class="activity-card">
+                    <h3 class="activity-title">
+                        <i class="bi bi-activity"></i>
+                        Atividade Recente
+                    </h3>
+                    
+                    <div class="activity-list">
+                        {% for activity in recent_activities|slice:":5" %}
+                        <div class="activity-item">
+                            <i class="bi bi-{{ activity.icon }} activity-icon"></i>
+                            <div class="activity-content">
+                                <p class="activity-text">{{ activity.text }}</p>
+                                <span class="activity-time">{{ activity.time }}</span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="activity-empty">
+                            <i class="bi bi-info-circle"></i>
+                            <p>Nenhuma atividade recente</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <a href="/atividade" class="activity-link">
+                        Ver toda atividade
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Conteúdo Principal -->
+            <div class="profile-content">
+                <!-- Seção: Biografia -->
+                <section class="profile-section" aria-labelledby="bio-title">
+                    <header class="section-header">
+                        <h2 id="bio-title" class="section-title">
+                            <i class="bi bi-person-lines-fill"></i>
+                            Sobre Mim
+                        </h2>
+                        <button class="btn btn--ghost btn--sm" onclick="toggleBio()">
+                            <i class="bi bi-pencil"></i>
+                            Editar
+                        </button>
+                    </header>
+                    
+                    <div class="section-content">
+                        {% if profile.bio %}
+                            <div class="profile-bio">
+                                {{ profile.bio|linebreaks }}
+                            </div>
+                        {% else %}
+                            <div class="empty-state empty-state--bio">
+                                <i class="bi bi-journal-text"></i>
+                                <h3>Nenhuma biografia adicionada</h3>
+                                <p>Compartilhe um pouco sobre você e seus gostos em séries.</p>
+                                <a href="{% url 'users:profile_edit' %}#bio" class="btn btn--primary">
+                                    <i class="bi bi-pencil"></i>
+                                    Adicionar Biografia
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Seção: Informações Adicionais -->
+                <section class="profile-section" aria-labelledby="info-title">
+                    <header class="section-header">
+                        <h2 id="info-title" class="section-title">
+                            <i class="bi bi-info-circle"></i>
+                            Informações Adicionais
+                        </h2>
+                    </header>
+                    
+                    <div class="section-content">
+                        <div class="info-grid">
+                            <div class="info-item detailed">
+                                <div class="info-icon">
+                                    <i class="bi bi-calendar"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4 class="info-label">Data de Nascimento</h4>
+                                    <p class="info-value">
+                                        {% if profile.data_nascimento %}
+                                            {{ profile.data_nascimento|date:"d/m/Y" }}
+                                            <span class="info-meta">({{ age }} anos)</span>
+                                        {% else %}
+                                            <span class="text-muted">Não informado</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item detailed">
+                                <div class="info-icon">
+                                    <i class="bi bi-globe"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4 class="info-label">Website</h4>
+                                    <p class="info-value">
+                                        {% if profile.website %}
+                                            <a href="{{ profile.website }}" target="_blank" class="info-link">
+                                                {{ profile.website }}
+                                                <i class="bi bi-box-arrow-up-right"></i>
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">Não informado</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item detailed">
+                                <div class="info-icon">
+                                    <i class="bi bi-tv"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4 class="info-label">Gêneros Favoritos</h4>
+                                    <p class="info-value">
+                                        {% if favorite_genres %}
+                                            <div class="genre-tags">
+                                                {% for genre in favorite_genres %}
+                                                <span class="genre-tag">{{ genre }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">Ainda não definido</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item detailed">
+                                <div class="info-icon">
+                                    <i class="bi bi-star"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4 class="info-label">Série Favorita</h4>
+                                    <p class="info-value">
+                                        {% if favorite_series %}
+                                            <a href="{{ favorite_series.get_absolute_url }}" class="info-link">
+                                                {{ favorite_series.titulo }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">Ainda não definida</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção: Minhas Séries -->
+                <section class="profile-section" aria-labelledby="series-title">
+                    <header class="section-header">
+                        <h2 id="series-title" class="section-title">
+                            <i class="bi bi-collection-play"></i>
+                            Minhas Séries
+                            <span class="badge badge--count">{{ user.serie_set.count }}</span>
+                        </h2>
+                        
+                        <div class="section-actions">
+                            <a href="{% url 'series:create' %}" class="btn btn--primary btn--sm">
+                                <i class="bi bi-plus-circle"></i>
+                                Nova Série
+                            </a>
+                            {% if user.serie_set.count > 6 %}
+                            <a href="{% url 'series:list' %}?criado_por={{ user.id }}" class="btn btn--outline btn--sm">
+                                <i class="bi bi-list-ul"></i>
+                                Ver Todas
+                            </a>
+                            {% endif %}
+                        </div>
+                    </header>
+                    
+                    <div class="section-content">
+                        {% if user.serie_set.all %}
+                            <div class="series-grid series-grid--profile">
+                                {% for serie in user.serie_set.all|slice:":6" %}
+                                <article class="series-card series-card--profile">
+                                    <div class="card-header">
+                                        {% if serie.imagem %}
+                                            <img src="{{ serie.imagem.url }}" 
+                                                 class="card-image" 
+                                                 alt="{{ serie.titulo }}"
+                                                 loading="lazy">
+                                        {% else %}
+                                            <div class="card-image-placeholder">
+                                                <i class="bi bi-tv"></i>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <div class="card-badges">
+                                            <span class="genre-badge" data-genre="{{ serie.genero }}">
+                                                {{ serie.get_genero_display }}
+                                            </span>
+                                            {% if serie.esta_em_alta %}
+                                            <span class="trending-badge" title="Série em alta">
+                                                <i class="bi bi-fire"></i>
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card-content">
+                                        <h3 class="card-title">
+                                            <a href="{{ serie.get_absolute_url }}" class="card-link">
+                                                {{ serie.titulo }}
+                                            </a>
+                                        </h3>
+                                        
+                                        <div class="card-meta">
+                                            <span class="meta-item">
+                                                <i class="bi bi-calendar"></i>
+                                                {{ serie.ano }}
+                                            </span>
+                                            <span class="meta-item">
+                                                <i class="bi bi-star"></i>
+                                                {{ serie.avaliacao_media|default:"N/A" }}
+                                            </span>
+                                        </div>
+                                        
+                                        <p class="card-description">
+                                            {{ serie.descricao|truncatewords:15 }}
+                                        </p>
+                                    </div>
+                                    
+                                    <footer class="card-footer">
+                                        <div class="card-actions">
+                                            <a href="{{ serie.get_absolute_url }}" class="btn btn--primary btn--sm">
+                                                <i class="bi bi-eye"></i>
+                                                Ver Detalhes
+                                            </a>
+                                            <a href="{% url 'series:update' serie.pk %}" class="btn btn--outline btn--sm">
+                                                <i class="bi bi-pencil"></i>
+                                                Editar
+                                            </a>
+                                        </div>
+                                    </footer>
+                                </article>
+                                {% endfor %}
+                            </div>
+                            
+                            {% if user.serie_set.count > 6 %}
+                            <div class="section-footer">
+                                <a href="{% url 'series:list' %}?criado_por={{ user.id }}" class="btn btn--outline">
+                                    <i class="bi bi-list-ul"></i>
+                                    Ver Todas as {{ user.serie_set.count }} Séries
+                                </a>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="empty-state empty-state--series">
+                                <i class="bi bi-collection-play"></i>
+                                <h3>Nenhuma série cadastrada</h3>
+                                <p>Comece a compartilhar suas séries favoritas com a comunidade.</p>
+                                <a href="{% url 'series:create' %}" class="btn btn--primary">
+                                    <i class="bi bi-plus-circle"></i>
+                                    Adicionar Primeira Série
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Seção: Contribuições -->
+                <section class="profile-section" aria-labelledby="contributions-title">
+                    <header class="section-header">
+                        <h2 id="contributions-title" class="section-title">
+                            <i class="bi bi-graph-up"></i>
+                            Minhas Contribuições
+                        </h2>
+                    </header>
+                    
+                    <div class="section-content">
+                        <div class="contributions-grid">
+                            <div class="contribution-item">
+                                <div class="contribution-icon">
+                                    <i class="bi bi-chat-left-text"></i>
+                                </div>
+                                <div class="contribution-content">
+                                    <span class="contribution-number">{{ user.comentario_set.count|default:0 }}</span>
+                                    <span class="contribution-label">Comentários</span>
+                                </div>
+                            </div>
+                            
+                            <div class="contribution-item">
+                                <div class="contribution-icon">
+                                    <i class="bi bi-star"></i>
+                                </div>
+                                <div class="contribution-content">
+                                    <span class="contribution-number">{{ user.avaliacao_set.count|default:0 }}</span>
+                                    <span class="contribution-label">Avaliações</span>
+                                </div>
+                            </div>
+                            
+                            <div class="contribution-item">
+                                <div class="contribution-icon">
+                                    <i class="bi bi-heart"></i>
+                                </div>
+                                <div class="contribution-content">
+                                    <span class="contribution-number">{{ user.favoritos.count|default:0 }}</span>
+                                    <span class="contribution-label">Favoritos</span>
+                                </div>
+                            </div>
+                            
+                            <div class="contribution-item">
+                                <div class="contribution-icon">
+                                    <i class="bi bi-share"></i>
+                                </div>
+                                <div class="contribution-content">
+                                    <span class="contribution-number">{{ user.serie_set.count }}</span>
+                                    <span class="contribution-label">Séries Adicionadas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Configuração do perfil
+const PROFILE_CONFIG = {
+    userId: {{ user.id }},
+    username: "{{ user.username }}",
+    stats: {
+        seriesCreated: {{ user.serie_set.count }},
+        favoritesCount: {{ user.favoritos.count|default:0 }},
+        commentsCount: {{ user.comentario_set.count|default:0 }},
+        membershipDays: {{ membership_days }}
+    }
+};
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    initializeProfilePage();
+    setupProfileInteractions();
+});
+
+function initializeProfilePage() {
+    // Atualizar contadores em tempo real
+    updateLiveCounters();
+    
+    // Configurar tooltips
+    setupProfileTooltips();
+    
+    // Configurar eventos de interação
+    setupProfileEvents();
+}
+
+function setupProfileInteractions() {
+    // Toggle da biografia (edição rápida)
+    const bioSection = document.querySelector('.profile-bio');
+    if (bioSection) {
+        bioSection.addEventListener('dblclick', function() {
+            window.location.href = "{% url 'users:profile_edit' %}#bio";
+        });
+    }
+    
+    // Hover effects nas séries
+    const seriesCards = document.querySelectorAll('.series-card--profile');
+    seriesCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+}
+
+function toggleBio() {
+    window.location.href = "{% url 'users:profile_edit' %}#bio";
+}
+
+function updateLiveCounters() {
+    // Atualizar contadores periodicamente (se necessário)
+    setInterval(() => {
+        // Potencialmente buscar dados atualizados via API
+        console.log('Atualizando contadores...');
+    }, 30000);
+}
+
+function setupProfileTooltips() {
+    // Verificar se Bootstrap está disponível
+    if (typeof bootstrap !== 'undefined') {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    } else {
+        console.warn('Bootstrap não encontrado. Tooltips não serão inicializados.');
+    }
+}
+
+function setupProfileEvents() {
+    // Evento para acompanhar interações do usuário
+    document.querySelectorAll('.series-card--profile .card-link').forEach(link => {
+        link.addEventListener('click', function() {
+            // Tracking de analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'profile_series_click', {
+                    'event_category': 'Profile',
+                    'event_label': this.textContent
+                });
+            }
+        });
+    });
+}
+
+// Função para atualizar estatísticas (para uso futuro com API)
+function updateProfileStats(newStats) {
+    if (newStats) {
+        PROFILE_CONFIG.stats = { ...PROFILE_CONFIG.stats, ...newStats };
+        console.log('Estatísticas atualizadas:', PROFILE_CONFIG.stats);
+    }
+}
+
+// Função para verificar se o usuário está online
+function checkUserStatus() {
+    // Implementação futura para status online/offline
+    return navigator.onLine ? 'online' : 'offline';
+}
+
+// Exportar funções para uso global
+window.ProfileManager = {
+    toggleBio,
+    refreshStats: updateLiveCounters,
+    updateStats: updateProfileStats,
+    getUserStatus: checkUserStatus
+};
+
+// Error handling global para esta página
+window.addEventListener('error', function(e) {
+    console.error('Erro na página de perfil:', e.error);
+});
+
+// Cleanup quando a página for fechada
+window.addEventListener('beforeunload', function() {
+    // Limpar event listeners específicos se necessário
+    const seriesCards = document.querySelectorAll('.series-card--profile');
+    seriesCards.forEach(card => {
+        card.removeEventListener('mouseenter');
+        card.removeEventListener('mouseleave');
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

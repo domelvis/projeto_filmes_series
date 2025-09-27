@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirmar Exclusão - Breaking Bad - Plataforma Séries TV</title>
+    <meta
+      name="description"
+      content="Confirme a exclusão da série Breaking Bad. Esta ação é irreversível e removerá todos os dados associados."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+       <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Seus outros links CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+  </head>
+  <body>
+    <!-- Header da Página -->
+    <header class="page-header page-header--danger">
+      <nav class="breadcrumb-nav" aria-label="Navegação estrutural">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/home" class="breadcrumb-link">
+              <span class="breadcrumb-icon">🏠</span>
+              Início
+            </a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="/catalogo" class="breadcrumb-link">
+              <span class="breadcrumb-icon">📺</span>
+              Catálogo
+            </a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="/series/breaking-bad" class="breadcrumb-link">
+              <span class="breadcrumb-icon">🎬</span>
+              Breaking Bad
+            </a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <span class="breadcrumb-icon">🗑️</span>
+            Confirmar Exclusão
+          </li>
+        </ol>
+      </nav>
+
+      <div class="header-content">
+        <div class="header-text">
+          <h1 class="page-title page-title--danger">
+            <span class="title-icon">⚠️</span>
+            Confirmar Exclusão
+          </h1>
+          <p class="page-subtitle">
+            Ação irreversível - Revise cuidadosamente antes de confirmar
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="delete-confirmation" role="main">
+      <div class="confirmation-container">
+        <!-- Card de Confirmação -->
+        <article
+          class="confirmation-card confirmation-card--danger"
+          aria-labelledby="confirmation-title"
+        >
+          <header class="confirmation-header">
+            <div class="confirmation-icon" aria-hidden="true">
+              <span class="icon-danger">🚨</span>
+            </div>
+            <h2 id="confirmation-title" class="confirmation-title">
+              Excluir Série Permanentemente
+            </h2>
+            <p class="confirmation-subtitle">
+              Você está prestes a remover "<strong>Breaking Bad</strong>" do
+              sistema
+            </p>
+          </header>
+
+          <!-- Alerta de Perigo -->
+          <div class="alert alert--critical" role="alert" aria-live="polite">
+            <div class="alert-icon">🔥</div>
+            <div class="alert-content">
+              <h3 class="alert-title">Atenção: Ação Crítica</h3>
+              <ul class="alert-list">
+                <li>Esta operação <strong>não pode ser desfeita</strong></li>
+                <li>
+                  Todos os dados associados serão
+                  <strong>permanentemente removidos</strong>
+                </li>
+                <li>
+                  Episódios, avaliações e comentários serão
+                  <strong>excluídos</strong>
+                </li>
+                <li>
+                  Esta ação afetará <strong>todos os usuários</strong> do
+                  sistema
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Preview da Série -->
+          <section
+            class="series-preview"
+            aria-labelledby="series-preview-title"
+          >
+            <h3 id="series-preview-title" class="preview-title">
+              Série a Ser Excluída
+            </h3>
+
+            <div class="preview-content">
+              <div class="preview-media">
+                <img
+                  src="/images/breaking-bad-cover.jpg"
+                  alt="Capa da série Breaking Bad"
+                  class="preview-image"
+                  loading="lazy"
+                  width="200"
+                  height="300"
+                />
+              </div>
+
+              <div class="preview-details">
+                <h4 class="series-title">Breaking Bad</h4>
+
+                <div class="series-meta">
+                  <span class="meta-badge meta-badge--drama"> Drama </span>
+                  <span class="meta-year">
+                    <span class="meta-icon">📅</span>
+                    2008
+                  </span>
+                  <span class="meta-author">
+                    <span class="meta-icon">👤</span>
+                    Adicionada por: admin_user
+                  </span>
+                </div>
+
+                <div class="series-description">
+                  <p>
+                    Um professor de química do ensino médio diagnosticado com
+                    câncer de pulmão inoperável recorre à fabricação e venda de
+                    metanfetamina para garantir o futuro financeiro de sua
+                    família...
+                  </p>
+                </div>
+
+                <!-- Estatísticas da Série -->
+                <div class="series-stats">
+                  <div class="stat-item">
+                    <span class="stat-label">Data de Criação:</span>
+                    <span class="stat-value">15/03/2024</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label">Última Atualização:</span>
+                    <span class="stat-value">22/09/2025</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label">Total de Episódios:</span>
+                    <span class="stat-value">62 episódios</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-label">Avaliações:</span>
+                    <span class="stat-value">1,847 avaliações</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Impacto da Exclusão -->
+          <section class="impact-section" aria-labelledby="impact-title">
+            <h3 id="impact-title" class="impact-title">Impacto da Exclusão</h3>
+
+            <div class="impact-grid">
+              <div class="impact-item impact-item--high">
+                <span class="impact-icon">💔</span>
+                <div class="impact-content">
+                  <h4>Dados Removidos</h4>
+                  <ul>
+                    <li>Informações da série (62 episódios)</li>
+                    <li>5 temporadas completas</li>
+                    <li>1,847 avaliações dos usuários</li>
+                    <li>3,256 comentários e discussões</li>
+                    <li>Galeria com 127 imagens</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="impact-item impact-item--medium">
+                <span class="impact-icon">👥</span>
+                <div class="impact-content">
+                  <h4>Usuários Afetados</h4>
+                  <ul>
+                    <li>2,341 usuários com série nos favoritos</li>
+                    <li>1,892 watchlists serão atualizadas</li>
+                    <li>4,127 registros de histórico</li>
+                    <li>Sistema de recomendações recalculado</li>
+                    <li>Notificações enviadas aos usuários</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="impact-item impact-item--low">
+                <span class="impact-icon">📊</span>
+                <div class="impact-content">
+                  <h4>Estatísticas do Sistema</h4>
+                  <ul>
+                    <li>Relatórios mensais atualizados</li>
+                    <li>Métricas de popularidade recalculadas</li>
+                    <li>Cache do sistema limpo</li>
+                    <li>Índices de busca atualizados</li>
+                    <li>Backup de segurança gerado</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Formulário de Confirmação -->
+          <form
+            method="post"
+            action="/series/breaking-bad/delete"
+            class="confirmation-form"
+            aria-describedby="form-instructions"
+          >
+            <input type="hidden" name="csrf_token" value="abc123xyz" />
+
+            <div id="form-instructions" class="form-instructions">
+              <p>
+                <strong>Instruções:</strong> Para confirmar a exclusão, digite o
+                nome da série no campo abaixo e clique em "Confirmar Exclusão".
+              </p>
+            </div>
+
+            <!-- Confirmação por Nome -->
+            <div class="confirmation-field">
+              <label for="series_name_confirmation" class="field-label">
+                Digite "<strong>Breaking Bad</strong>" para confirmar:
+              </label>
+              <input
+                type="text"
+                id="series_name_confirmation"
+                name="series_name_confirmation"
+                class="confirmation-input"
+                placeholder="Digite o nome exato da série"
+                required
+                autocomplete="off"
+                spellcheck="false"
+                aria-describedby="confirmation-help"
+              />
+              <small id="confirmation-help" class="field-help">
+                Digite exatamente como mostrado acima para habilitar a exclusão
+              </small>
+            </div>
+
+            <!-- Motivo da Exclusão (Opcional) -->
+            <div class="confirmation-field">
+              <label for="deletion_reason" class="field-label">
+                Motivo da exclusão (opcional):
+              </label>
+              <select
+                id="deletion_reason"
+                name="deletion_reason"
+                class="confirmation-select"
+              >
+                <option value="">Selecione um motivo...</option>
+                <option value="duplicado">Série duplicada</option>
+                <option value="informacoes_incorretas">
+                  Informações incorretas
+                </option>
+                <option value="conteudo_inapropriado">
+                  Conteúdo inapropriado
+                </option>
+                <option value="violacao_direitos">
+                  Violação de direitos autorais
+                </option>
+                <option value="solicitacao_usuario">
+                  Solicitação do usuário
+                </option>
+                <option value="manutencao_sistema">
+                  Manutenção do sistema
+                </option>
+                <option value="outro">Outro motivo</option>
+              </select>
+            </div>
+
+            <!-- Comentário Adicional -->
+            <div class="confirmation-field">
+              <label for="deletion_notes" class="field-label">
+                Comentários adicionais (opcional):
+              </label>
+              <textarea
+                id="deletion_notes"
+                name="deletion_notes"
+                class="confirmation-textarea"
+                placeholder="Detalhes adicionais sobre a exclusão..."
+                rows="3"
+                maxlength="500"
+              ></textarea>
+              <small class="field-help"
+                >Máximo 500 caracteres -
+                <span class="char-counter"
+                  >500 caracteres restantes</span
+                ></small
+              >
+            </div>
+
+            <!-- Ações do Formulário -->
+            <div class="form-actions">
+              <a
+                href="/series/breaking-bad"
+                class="btn btn--secondary"
+                aria-label="Cancelar e voltar para a página da série"
+              >
+                <span class="btn-icon">↶</span>
+                Cancelar e Voltar
+              </a>
+
+              <a
+                href="/catalogo"
+                class="btn btn--outline"
+                aria-label="Cancelar e voltar para o catálogo"
+              >
+                <span class="btn-icon">📺</span>
+                Voltar ao Catálogo
+              </a>
+
+              <button
+                type="submit"
+                class="btn btn--danger"
+                id="confirm-delete-btn"
+                disabled
+                aria-describedby="delete-warning"
+              >
+                <span class="btn-icon">🗑️</span>
+                Confirmar Exclusão
+              </button>
+            </div>
+
+            <!-- Aviso Final -->
+            <div id="delete-warning" class="final-warning" role="alert">
+              <span class="warning-icon">⚡</span>
+              <strong>Último aviso:</strong> Após a confirmação, esta série será
+              permanentemente removida do banco de dados.
+            </div>
+          </form>
+        </article>
+
+        <!-- Painel de Ajuda -->
+        <aside class="help-panel" aria-labelledby="help-title">
+          <h3 id="help-title" class="help-title">
+            <span class="help-icon">❓</span>
+            Precisa de Ajuda?
+          </h3>
+
+          <div class="help-content">
+            <div class="help-item">
+              <h4>Dúvidas sobre a exclusão?</h4>
+              <p>
+                Entre em contato com a administração do sistema antes de
+                prosseguir com a exclusão.
+              </p>
+              <a
+                href="mailto:admin@seriestv.com?subject=Dúvida sobre exclusão: Breaking Bad"
+                class="help-link"
+              >
+                📧 Contatar Administração
+              </a>
+            </div>
+
+            <div class="help-item">
+              <h4>Alternativas à Exclusão</h4>
+              <ul>
+                <li>
+                  <a href="/series/breaking-bad/edit"
+                    >📝 Editar informações da série</a
+                  >
+                </li>
+                <li>
+                  <a href="/series/breaking-bad"
+                    >👁️ Revisar detalhes da série</a
+                  >
+                </li>
+                <li><a href="/catalogo">📺 Voltar ao catálogo completo</a></li>
+                <li><a href="/admin/series">⚙️ Painel administrativo</a></li>
+              </ul>
+            </div>
+
+            <div class="help-item">
+              <h4>Política de Exclusão</h4>
+              <p>
+                Todas as exclusões são registradas e podem ser auditadas. Em
+                casos específicos, dados podem ser recuperados em até 7 dias.
+              </p>
+              <a href="/politicas/exclusao" class="help-link"
+                >📄 Ver política completa</a
+              >
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Modal de Confirmação Final -->
+    <dialog
+      id="finalConfirmationModal"
+      class="confirmation-modal"
+      aria-labelledby="modal-title"
+    >
+      <div class="modal-content">
+        <h2 id="modal-title" class="modal-title">
+          <span class="modal-icon">⏳</span>
+          Processando Exclusão
+        </h2>
+
+        <div class="modal-body">
+          <p>Estamos removendo "<strong>Breaking Bad</strong>" do sistema...</p>
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill"></div>
+          </div>
+          <p class="modal-note">Esta operação pode levar alguns segundos.</p>
+          <div class="processing-steps">
+            <div class="step step--active">
+              <span class="step-icon">🔄</span>
+              <span class="step-text">Validando permissões...</span>
+            </div>
+            <div class="step">
+              <span class="step-icon">📊</span>
+              <span class="step-text">Removendo dados...</span>
+            </div>
+            <div class="step">
+              <span class="step-icon">👥</span>
+              <span class="step-text">Notificando usuários...</span>
+            </div>
+            <div class="step">
+              <span class="step-icon">✅</span>
+              <span class="step-text">Concluído!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn btn--secondary"
+            onclick="document.getElementById('finalConfirmationModal').close()"
+          >
+            Cancelar Processamento
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Footer da Página -->
+    <footer class="page-footer page-footer--danger" role="contentinfo">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4 class="footer-title">Navegação Rápida</h4>
+          <ul class="footer-links">
+            <li><a href="/catalogo">📺 Voltar ao Catálogo</a></li>
+            <li><a href="/home">🏠 Página Inicial</a></li>
+            <li><a href="/ajuda">❓ Central de Ajuda</a></li>
+            <li><a href="/admin">⚙️ Painel Admin</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-title">Segurança & Auditoria</h4>
+          <ul class="footer-links">
+            <li><span class="security-status">🔒 Conexão SSL Ativa</span></li>
+            <li>
+              <span class="security-status">📊 Auditoria Habilitada</span>
+            </li>
+            <li>
+              <span class="security-status">⚡ Validação em Tempo Real</span>
+            </li>
+            <li><span class="security-status">🛡️ Proteção CSRF</span></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-title">Informações do Sistema</h4>
+          <div class="system-info">
+            <div class="info-row">
+              <span class="info-item">🕒 Horário: 14:32</span>
+              <span class="info-item">📅 Data: 26/09/2025</span>
+            </div>
+            <div class="info-row">
+              <span class="info-item">👤 Usuário: admin_user</span>
+              <span class="info-item">🌐 IP: 192.168.1.100</span>
+            </div>
+            <div class="info-row">
+              <span class="info-item">🎯 Sessão: #SESSION_123456</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          &copy; 2025 Plataforma Séries TV.
+          <span class="footer-version">v2.1.3</span>
+          <span class="footer-build">(build-20250926)</span>
+        </p>
+        <p class="footer-notice">
+          🔍 Todas as exclusões são registradas para fins de auditoria e
+          segurança.
+          <a href="/politicas/auditoria">Saiba mais</a>
+        </p>
+      </div>
+    </footer>
+
+    <!-- Container para Notificações Toast -->
+    <div
+      id="toastContainer"
+      class="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <!-- Mensagem para usuários sem JavaScript -->
+    <noscript>
+      <div class="noscript-warning">
+        <div class="warning-content">
+          <h3>⚠️ JavaScript Necessário</h3>
+          <p>
+            Esta página requer JavaScript habilitado para validação de segurança
+            e funcionalidades interativas.
+          </p>
+          <div class="warning-actions">
+            <a href="/series/breaking-bad" class="btn btn--secondary"
+              >Voltar à Série</a
+            >
+            <a href="/catalogo" class="btn btn--outline">Voltar ao Catálogo</a>
+          </div>
+        </div>
+      </div>
+    </noscript>
+
+    <!-- Loading Spinner Global -->
+    <div id="globalLoading" class="global-loading" aria-hidden="true" hidden>
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Processando operação...</p>
+        <p class="loading-subtext">Por favor, aguarde</p>
+      </div>
+    </div>
+
+    <!-- Microdata para SEO e Acessibilidade -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Confirmar Exclusão - Breaking Bad",
+        "description": "Página de confirmação para exclusão da série Breaking Bad",
+        "url": "https://seriestv.com/series/breaking-bad/delete",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Início",
+              "item": "https://seriestv.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Catálogo",
+              "item": "https://seriestv.com/catalogo"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Breaking Bad",
+              "item": "https://seriestv.com/series/breaking-bad"
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "name": "Confirmar Exclusão"
+            }
+          ]
+        }
+      }
+    </script>
+  </body>
+</html>

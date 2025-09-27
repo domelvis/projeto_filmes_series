@@ -1,0 +1,57 @@
+/*
+* RESPONSIVE.CSS
+* Estilos para ajustes de layout em diferentes tamanhos de tela.
+* Mobile-First (Começa pequeno, ajusta para grande)
+*/
+
+/* 1. Padrões Mobile (até 576px) - Já coberto no layout principal, mas podemos refinar */
+.container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.main-header .logo {
+    font-size: 1.5rem;
+}
+
+.nav-menu {
+    gap: 1rem;
+}
+
+/* 2. Telas Pequenas (Tablets e celulares grandes - min-width: 576px) */
+@media (min-width: 576px) {
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+/* 3. Telas Médias (Tablets na horizontal - min-width: 768px) */
+@media (min-width: 768px) {
+    /* Layout com 2 ou 3 colunas, se aplicável */
+    .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+/* 4. Telas Grandes (Desktops - min-width: 992px) */
+@media (min-width: 992px) {
+    /* Container mais largo */
+    .container {
+        max-width: 1200px;
+    }
+    
+    /* Layout com 3 ou mais colunas */
+    .recommendations-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* 5. Telas Extra Grandes (Monitores wide - min-width: 1200px) */
+@media (min-width: 1200px) {
+    .recommendations-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

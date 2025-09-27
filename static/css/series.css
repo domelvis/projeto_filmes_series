@@ -1,0 +1,578 @@
+/* ========================================
+   SÉRIES TV - CSS ESPECÍFICO PARA SÉRIES
+   Estilos para páginas relacionadas a séries
+   ======================================== */
+
+/* ===== PÁGINA DE LISTAGEM DE SÉRIES ===== */
+.series-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: var(--text-light);
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.series-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.series-header .container {
+    position: relative;
+    z-index: 1;
+}
+
+.series-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.series-header p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+/* ===== CARDS DE SÉRIES ===== */
+.series-card {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.series-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-8px);
+}
+
+.series-card .card-img-top {
+    height: 250px;
+    object-fit: cover;
+    transition: var(--transition);
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.series-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.series-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+}
+
+.series-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.series-card .card-text {
+    color: var(--text-secondary);
+    flex: 1;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.series-card .card-footer {
+    background: transparent;
+    border-top: 1px solid #e2e8f0;
+    padding: 1rem 1.5rem;
+}
+
+/* ===== IMAGEM PADRÃO PARA SÉRIES SEM IMAGEM ===== */
+.series-placeholder {
+    height: 250px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.series-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="tv-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="none"/><rect x="2" y="2" width="16" height="12" fill="rgba(148,163,184,0.1)" rx="1"/><rect x="4" y="4" width="12" height="8" fill="rgba(148,163,184,0.05)" rx="0.5"/><circle cx="10" cy="8" r="1" fill="rgba(148,163,184,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23tv-pattern)"/></svg>');
+    opacity: 0.3;
+}
+
+/* ===== BADGES DE GÊNERO ===== */
+.genre-badge {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #d97706 100%);
+    color: var(--text-light);
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-block;
+    box-shadow: var(--shadow-sm);
+}
+
+.genre-badge.bg-action {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.genre-badge.bg-comedy {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.genre-badge.bg-drama {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.genre-badge.bg-sci-fi {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+}
+
+.genre-badge.bg-horror {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+.genre-badge.bg-romance {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+}
+
+.genre-badge.bg-thriller {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+.genre-badge.bg-animation {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.genre-badge.bg-documentary {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+}
+
+/* ===== PÁGINA DE DETALHES DA SÉRIE ===== */
+.series-detail-img {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+    max-height: 400px;
+    object-fit: cover;
+}
+
+.series-detail-img:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-xl);
+}
+
+.series-detail-info {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.series-detail-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.series-detail-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.series-detail-description {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.series-detail-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.series-stat {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid #e2e8f0;
+}
+
+.series-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block;
+}
+
+.series-stat-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ===== SÉRIES RELACIONADAS ===== */
+.related-series {
+    margin-top: 3rem;
+}
+
+.related-series h3 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.related-series h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    border-radius: 2px;
+}
+
+.related-series-card {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    overflow: hidden;
+    height: 100%;
+}
+
+.related-series-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.related-series-card .card-img-top {
+    height: 180px;
+    object-fit: cover;
+}
+
+/* ===== FORMULÁRIO DE SÉRIE ===== */
+.series-form {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.series-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.series-form .form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.series-form .form-control,
+.series-form .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: var(--transition);
+    background-color: var(--bg-primary);
+}
+
+.series-form .form-control:focus,
+.series-form .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+.series-form textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* ===== PREVIEW DE IMAGEM ===== */
+.image-preview {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.image-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-md);
+    border: 2px solid #e2e8f0;
+}
+
+/* ===== CONFIRMAÇÃO DE EXCLUSÃO ===== */
+.delete-confirmation {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    border: 2px solid var(--danger-color);
+}
+
+.delete-confirmation .card-header {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+}
+
+.delete-confirmation .alert-warning {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid var(--warning-color);
+    border-radius: var(--border-radius-sm);
+}
+
+.delete-preview {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.delete-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-md);
+    border: 2px solid #e2e8f0;
+}
+
+/* ===== FILTROS E BUSCA ===== */
+.search-filters {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.search-filters .form-control,
+.search-filters .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1rem;
+    transition: var(--transition);
+}
+
+.search-filters .form-control:focus,
+.search-filters .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+.search-results-info {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 1px solid var(--info-color);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    color: #1e40af;
+}
+
+/* ===== ESTADO VAZIO ===== */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ===== RESPONSIVIDADE PARA SÉRIES ===== */
+@media (max-width: 768px) {
+    .series-header h1 {
+        font-size: 2rem;
+    }
+    
+    .series-header p {
+        font-size: 1rem;
+    }
+    
+    .series-detail-title {
+        font-size: 2rem;
+    }
+    
+    .series-detail-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .series-detail-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .series-card .card-img-top {
+        height: 200px;
+    }
+    
+    .related-series-card .card-img-top {
+        height: 150px;
+    }
+}
+
+@media (max-width: 576px) {
+    .series-header {
+        padding: 2rem 0;
+    }
+    
+    .series-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .series-detail-title {
+        font-size: 1.75rem;
+    }
+    
+    .series-detail-info {
+        padding: 1.5rem;
+    }
+    
+    .series-card .card-body {
+        padding: 1rem;
+    }
+    
+    .series-card .card-footer {
+        padding: 0.75rem 1rem;
+    }
+    
+    .search-filters {
+        padding: 1rem;
+    }
+}
+
+/* ===== ANIMAÇÕES ESPECÍFICAS ===== */
+@keyframes seriesCardHover {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-4px) scale(1.02);
+    }
+    100% {
+        transform: translateY(-8px) scale(1);
+    }
+}
+
+.series-card:hover {
+    animation: seriesCardHover 0.3s ease-out forwards;
+}
+
+@keyframes genreBadgePulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+
+.genre-badge:hover {
+    animation: genreBadgePulse 1.5s infinite;
+}
+
+/* ===== LOADING SKELETON ===== */
+.series-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: var(--border-radius);
+}
+
+.series-skeleton-card {
+    height: 400px;
+    margin-bottom: 2rem;
+}
+
+.series-skeleton-image {
+    height: 250px;
+    margin-bottom: 1rem;
+}
+
+.series-skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.series-skeleton-text.short {
+    width: 60%;
+}
+
+.series-skeleton-text.medium {
+    width: 80%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+

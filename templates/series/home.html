@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang=\"pt-br\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Séries TV - Sistema Docker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }       
+        h1 { color: #333; text-align: center; }
+        .status { background: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .btn { display: inline-block; padding: 10px 20px; margin: 5px; text-decoration: none; border-radius: 4px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-outline { background: transparent; border: 1px solid #007bff; color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class=\"container\">
+        <h1>🎬 Séries TV</h1>
+        <p style=\"text-align: center; font-size: 18px;\">Sistema funcionando perfeitamente com Docker!</p>
+        
+        <div class=\"status\">
+            <h3>✅ Status do Sistema</h3>
+            <ul>
+                <li>Django: ✅ Rodando</li>
+                <li>PostgreSQL: ✅ Conectado</li>
+                <li>Redis: ✅ Ativo</li>
+                <li>Nginx: ✅ Proxy configurado</li>
+            </ul>
+        </div>
+        
+        <div style=\"text-align: center; margin-top: 30px;\">
+            <a href=\"/admin\" class=\"btn btn-primary\">Django Admin</a>
+            <a href=\"/series\" class=\"btn btn-outline\">Catálogo de Séries</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/*
+* LAYOUT.CSS
+* Estilos para a estrutura principal da página (Header, Footer, Main Content).
+*/
+
+/* 1. Reset Básico para Layout e Fontes Globais */
+:root {
+    /* Cores de exemplo - use as cores do seu tema */
+    --color-primary: #1e88e5; /* Azul */
+    --color-primary-dark: #1565c0;
+    --color-background: #f4f4f9;
+    --color-background-dark: #212529; /* Dark Gray para o rodapé */
+    --color-text: #333;
+    --color-text-light: #f8f9fa; /* Off-White */
+    --border-radius: 8px;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Garante que o rodapé fique no final da página */
+}
+
+/* 2. Estilos para o Cabeçalho (Main Header) */
+.main-header {
+    background-color: var(--color-background-dark);
+    padding: 1rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--color-text-light);
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-header .logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-text-light);
+    text-decoration: none;
+}
+
+/* Estilos de navegação (Nav Menu) */
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-menu a {
+    color: var(--color-text-light);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-menu a:hover {
+    color: var(--color-primary);
+}
+
+
+/* 3. Estilos para o Conteúdo Principal */
+.content-wrapper {
+    flex-grow: 1; /* Permite que o conteúdo ocupe todo o espaço restante */
+    padding: 2rem 0;
+}
+
+/* Container de largura fixa/máxima */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 4. Estilos para a Trilha de Navegação (Breadcrumb) */
+.breadcrumb {
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.breadcrumb a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+
+/* 5. Estilos para o Rodapé (Main Footer) */
+.main-footer {
+    background-color: var(--color-background-dark);
+    color: var(--color-text-light);
+    padding: 2rem 0;
+    text-align: center;
+    border-top: 4px solid var(--color-primary); /* Linha de destaque */
+    margin-top: auto; /* Garante que ele fique no final */
+    font-size: 0.9rem;
+}
+
+.main-footer a {
+    color: var(--color-primary);
+    text-decoration: none;
+}

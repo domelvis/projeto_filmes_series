@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}404 - Página Não Encontrada{% endblock %}
+
+{% block extrastyle %}
+    <!-- Inclui Tailwind CSS via CDN (Garantia de carregamento) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Variáveis de cor (Baseadas no seu LAYOUT.CSS) */
+        :root {
+            --color-primary: #1e88e5; /* Azul Principal (Sua paleta) */
+            --color-primary-dark: #1565c0; /* Azul Escuro (Sua paleta) */
+            --color-background-dark: #212529; /* Fundo do Conteúdo/Header (Seu Dark Gray) */
+            --color-card-dark: #343a40; /* Card um pouco mais claro que o fundo */
+            --color-text-light: #f8f9fa; /* Texto Off-White */
+            --border-radius: 8px;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        .dark-bg-screen {
+            background-color: var(--color-background-dark); /* Fundo usando seu Dark Gray */
+            font-family: 'Inter', sans-serif;
+        }
+
+        .error-card {
+            background-color: var(--color-card-dark);
+            border-top: 5px solid var(--color-primary); /* Linha de destaque com o seu Azul */
+            border-radius: var(--border-radius);
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="dark-bg-screen min-h-screen flex items-center justify-center p-6 text-center text-color-text-light">
+        <!-- Cartão de Erro 404 -->
+        <div class="error-card w-full max-w-lg rounded-lg shadow-2xl p-8 md:p-12">
+            
+            <!-- Grande número 404 usando a cor primária -->
+            <h1 class="text-7xl md:text-9xl font-extrabold mb-4" style="color: var(--color-primary);">
+                404
+            </h1>
+            
+            <h2 class="text-3xl md:text-4xl font-semibold text-white mb-4">
+                Oops! Conteúdo Perdido.
+            </h2>
+            
+            <p class="text-lg text-gray-400 mb-8">
+                O link que você tentou acessar não leva a nenhuma série ou página válida no nosso catálogo.
+            </p>
+            
+            <!-- Botão de Retorno -->
+            <a href="{% url 'home' %}" class="btn-primary inline-block py-3 px-8 text-lg font-bold text-white rounded-md uppercase tracking-wider transform hover:scale-[1.03] focus:outline-none focus:ring-4 focus:ring-opacity-50" style="--tw-ring-color: var(--color-primary);">
+                Explorar o Catálogo
+            </a>
+            
+        </div>
+    </div>
+{% endblock %}

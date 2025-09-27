@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Nova Série - Plataforma Séries TV</title>
+    <meta name="description" content="Adicione uma nova série ao catálogo da Plataforma Séries TV. Preencha as informações básicas, adicione uma imagem e compartilhe com a comunidade.">
+    <meta name="robots" content="noindex, nofollow">
+       <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Seus outros links CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+</head>
+<body>
+    <!-- Header com Navegação -->
+    <header class="site-header" role="banner">
+        <nav class="main-navigation" aria-label="Navegação principal">
+            <div class="nav-container">
+                <a href="/home" class="site-logo">
+                    <span class="logo-icon">📺</span>
+                    <span class="logo-text">Séries TV</span>
+                </a>
+                
+                <div class="nav-menu">
+                    <a href="/home" class="nav-link">Início</a>
+                    <a href="/catalogo" class="nav-link">Catálogo</a>
+                    <a href="/generos" class="nav-link">Gêneros</a>
+                    <a href="/favoritos" class="nav-link">Favoritos</a>
+                    <a href="/perfil" class="nav-link">Perfil</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="search-toggle" aria-label="Abrir busca">
+                        <span class="search-icon">🔍</span>
+                    </button>
+                    <div class="user-menu">
+                        <button class="user-avatar" aria-label="Menu do usuário">
+                            <span class="avatar-text">AU</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav" aria-label="Navegação estrutural">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/home" class="breadcrumb-link">
+                        <span class="breadcrumb-icon">🏠</span>
+                        Início
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/catalogo" class="breadcrumb-link">
+                        <span class="breadcrumb-icon">📺</span>
+                        Catálogo
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/series" class="breadcrumb-link">
+                        <span class="breadcrumb-icon">⚙️</span>
+                        Gerenciar Séries
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span class="breadcrumb-icon">➕</span>
+                    Criar Nova Série
+                </li>
+            </ol>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="series-form" role="main">
+        <div class="container">
+            <!-- Cabeçalho da Página -->
+            <header class="page-header">
+                <div class="header-content">
+                    <h1 class="page-title">
+                        <span class="title-icon">➕</span>
+                        Criar Nova Série
+                    </h1>
+                    <p class="page-subtitle">
+                        Adicione uma nova série ao catálogo da plataforma. Preencha todas as informações necessárias para que outros usuários possam descobrir e avaliar o conteúdo.
+                    </p>
+                </div>
+                
+                <!-- Progresso do Formulário -->
+                <div class="form-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <div class="step active">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Informações Básicas</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Detalhes</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Mídia</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">4</span>
+                            <span class="step-label">Revisão</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Formulário Principal -->
+            <div class="form-container">
+                <form method="post" action="/series/criar" enctype="multipart/form-data" class="series-creation-form" novalidate>
+                    <input type="hidden" name="csrf_token" value="abc123xyz">
+                    
+                    <!-- Seção: Informações Básicas -->
+                    <section class="form-section active" data-step="1" aria-labelledby="basic-info-title">
+                        <header class="section-header">
+                            <h2 id="basic-info-title" class="section-title">
+                                <span class="section-icon">📝</span>
+                                Informações Básicas
+                            </h2>
+                            <p class="section-subtitle">Dados principais que identificam a série</p>
+                        </header>
+
+                        <div class="form-grid">
+                            <!-- Campo Título -->
+                            <div class="form-field form-field--full">
+                                <label for="titulo" class="field-label required">
+                                    <span class="label-icon">📺</span>
+                                    Título da Série
+                                </label>
+                                <div class="field-wrapper">
+                                    <input type="text" 
+                                           id="titulo" 
+                                           name="titulo" 
+                                           class="field-input"
+                                           placeholder="Digite o título da série..."
+                                           required
+                                           maxlength="200"
+                                           autocomplete="off"
+                                           aria-describedby="titulo-help titulo-error">
+                                    <div class="field-counter">
+                                        <span class="counter-current">0</span>/<span class="counter-max">200</span>
+                                    </div>
+                                </div>
+                                <small id="titulo-help" class="field-help">
+                                    Use o título original da série. Evite abreviações desnecessárias.
+                                </small>
+                                <div id="titulo-error" class="field-error" role="alert" aria-live="polite"></div>
+                            </div>
+
+                            <!-- Campo Ano e Gênero -->
+                            <div class="form-field">
+                                <label for="ano" class="field-label required">
+                                    <span class="label-icon">📅</span>
+                                    Ano de Estreia
+                                </label>
+                                <div class="field-wrapper">
+                                    <input type="number" 
+                                           id="ano" 
+                                           name="ano" 
+                                           class="field-input"
+                                           placeholder="AAAA"
+                                           required
+                                           min="1900"
+                                           max="2030"
+                                           aria-describedby="ano-help ano-error">
+                                </div>
+                                <small id="ano-help" class="field-help">
+                                    Ano da primeira exibição da série.
+                                </small>
+                                <div id="ano-error" class="field-error" role="alert" aria-live="polite"></div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="genero" class="field-label required">
+                                    <span class="label-icon">🎭</span>
+                                    Gênero Principal
+                                </label>
+                                <div class="field-wrapper">
+                                    <select id="genero" 
+                                            name="genero" 
+                                            class="field-select"
+                                            required
+                                            aria-describedby="genero-help genero-error">
+                                        <option value="">Selecione o gênero...</option>
+                                        <option value="acao">Ação</option>
+                                        <option value="animacao">Animação</option>
+                                        <option value="aventura">Aventura</option>
+                                        <option value="biografia">Biografia</option>
+                                        <option value="comedia">Comédia</option>
+                                        <option value="crime">Crime</option>
+                                        <option value="documentario">Documentário</option>
+                                        <option value="drama">Drama</option>
+                                        <option value="familia">Família</option>
+                                        <option value="fantasia">Fantasia</option>
+                                        <option value="ficcao_cientifica">Ficção Científica</option>
+                                        <option value="guerra">Guerra</option>
+                                        <option value="historia">História</option>
+                                        <option value="horror">Horror</option>
+                                        <option value="musical">Musical</option>
+                                        <option value="misterio">Mistério</option>
+                                        <option value="romance">Romance</option>
+                                        <option value="suspense">Suspense</option>
+                                        <option value="terror">Terror</option>
+                                        <option value="western">Western</option>
+                                    </select>
+                                    <span class="select-arrow" aria-hidden="true">▼</span>
+                                </div>
+                                <small id="genero-help" class="field-help">
+                                    Escolha o gênero que melhor descreve a série.
+                                </small>
+                                <div id="genero-error" class="field-error" role="alert" aria-live="polite"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção: Detalhes -->
+                    <section class="form-section" data-step="2" aria-labelledby="details-title">
+                        <header class="section-header">
+                            <h2 id="details-title" class="section-title">
+                                <span class="section-icon">📋</span>
+                                Detalhes da Série
+                            </h2>
+                            <p class="section-subtitle">Informações descritivas e contextuais</p>
+                        </header>
+
+                        <div class="form-grid">
+                            <!-- Campo Descrição -->
+                            <div class="form-field form-field--full">
+                                <label for="descricao" class="field-label required">
+                                    <span class="label-icon">📄</span>
+                                    Descrição/Sinopse
+                                </label>
+                                <div class="field-wrapper">
+                                    <textarea id="descricao" 
+                                              name="descricao" 
+                                              class="field-textarea"
+                                              placeholder="Descreva a série, sua trama principal, personagens principais e contexto..."
+                                              required
+                                              rows="6"
+                                              maxlength="1000"
+                                              aria-describedby="descricao-help descricao-error"></textarea>
+                                    <div class="field-counter">
+                                        <span class="counter-current">0</span>/<span class="counter-max">1000</span>
+                                    </div>
+                                </div>
+                                <small id="descricao-help" class="field-help">
+                                    Escreva uma sinopse completa que desperte o interesse. Inclua trama, personagens principais e tom da série.
+                                </small>
+                                <div id="descricao-error" class="field-error" role="alert" aria-live="polite"></div>
+                            </div>
+
+                            <!-- Campos Adicionais -->
+                            <div class="form-field">
+                                <label for="pais_origem" class="field-label">
+                                    <span class="label-icon">🌍</span>
+                                    País de Origem
+                                </label>
+                                <div class="field-wrapper">
+                                    <select id="pais_origem" name="pais_origem" class="field-select" aria-describedby="pais-help">
+                                        <option value="">Selecione o país...</option>
+                                        <option value="BR">Brasil</option>
+                                        <option value="US">Estados Unidos</option>
+                                        <option value="UK">Reino Unido</option>
+                                        <option value="CA">Canadá</option>
+                                        <option value="DE">Alemanha</option>
+                                        <option value="FR">França</option>
+                                        <option value="ES">Espanha</option>
+                                        <option value="IT">Itália</option>
+                                        <option value="JP">Japão</option>
+                                        <option value="KR">Coreia do Sul</option>
+                                        <option value="AU">Austrália</option>
+                                        <option value="MX">México</option>
+                                        <option value="AR">Argentina</option>
+                                        <option value="OTHER">Outro</option>
+                                    </select>
+                                    <span class="select-arrow" aria-hidden="true">▼</span>
+                                </div>
+                                <small id="pais-help" class="field-help">País onde a série foi originalmente produzida.</small>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="idioma_original" class="field-label">
+                                    <span class="label-icon">🗣️</span>
+                                    Idioma Original
+                                </label>
+                                <div class="field-wrapper">
+                                    <select id="idioma_original" name="idioma_original" class="field-select" aria-describedby="idioma-help">
+                                        <option value="">Selecione o idioma...</option>
+                                        <option value="pt">Português</option>
+                                        <option value="en">Inglês</option>
+                                        <option value="es">Espanhol</option>
+                                        <option value="fr">Francês</option>
+                                        <option value="de">Alemão</option>
+                                        <option value="it">Italiano</option>
+                                        <option value="ja">Japonês</option>
+                                        <option value="ko">Coreano</option>
+                                        <option value="zh">Chinês</option>
+                                        <option value="ru">Russo</option>
+                                        <option value="other">Outro</option>
+                                    </select>
+                                    <span class="select-arrow" aria-hidden="true">▼</span>
+                                </div>
+                                <small id="idioma-help" class="field-help">Idioma principal falado na série.</small>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="status" class="field-label">
+                                    <span class="label-icon">📊</span>
+                                    Status da Série
+                                </label>
+                                <div class="field-wrapper">
+                                    <select id="status" name="status" class="field-select" aria-describedby="status-help">
+                                        <option value="">Selecione o status...</option>
+                                        <option value="em_exibicao">Em Exibição</option>
+                                        <option value="finalizada">Finalizada</option>
+                                        <option value="cancelada">Cancelada</option>
+                                        <option value="hiato">Em Hiato</option>
+                                        <option value="anunciada">Anunciada</option>
+                                    </select>
+                                    <span class="select-arrow" aria-hidden="true">▼</span>
+                                </div>
+                                <small id="status-help" class="field-help">Status atual da produção da série.</small>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="classificacao_etaria" class="field-label">
+                                    <span class="label-icon">🔞</span>
+                                    Classificação Etária
+                                </label>
+                                <div class="field-wrapper">
+                                    <select id="classificacao_etaria" name="classificacao_etaria" class="field-select" aria-describedby="classificacao-help">
+                                        <option value="">Selecione a classificação...</option>
+                                        <option value="livre">Livre</option>
+                                        <option value="10">10 anos</option>
+                                        <option value="12">12 anos</option>
+                                        <option value="14">14 anos</option>
+                                        <option value="16">16 anos</option>
+                                        <option value="18">18 anos</option>
+                                    </select>
+                                    <span class="select-arrow" aria-hidden="true">▼</span>
+                                </div>
+                                <small id="classificacao-help" class="field-help">Classificação indicativa da série.</small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção: Mídia -->
+                    <section class="form-section" data-step="3" aria-labelledby="media-title">
+                        <header class="section-header">
+                            <h2 id="media-title" class="section-title">
+                                <span class="section-icon">🖼️</span>
+                                Mídia e Imagens
+                            </h2>
+                            <p class="section-subtitle">Adicione imagens que representem visualmente a série</p>
+                        </header>
+
+                        <div class="form-grid">
+                            <!-- Upload de Poster -->
+                            <div class="form-field form-field--full">
+                                <label for="imagem_poster" class="field-label required">
+                                    <span class="label-icon">🖼️</span>
+                                    Poster Principal
+                                </label>
+                                
+                                <div class="file-upload-area" id="posterUploadArea">
+                                    <input type="file" 
+                                           id="imagem_poster" 
+                                           name="imagem_poster" 
+                                           class="file-input"
+                                           accept="image/jpeg,image/jpg,image/png,image/webp"
+                                           aria-describedby="poster-help poster-error">
+                                    
+                                    <div class="upload-placeholder" id="posterPlaceholder">
+                                        <div class="upload-icon">📷</div>
+                                        <div class="upload-text">
+                                            <p class="upload-primary">Clique para adicionar o poster</p>
+                                            <p class="upload-secondary">ou arraste e solte aqui</p>
+                                        </div>
+                                        <div class="upload-specs">
+                                            JPG, PNG, WEBP • Máx. 10MB • Proporção recomendada: 2:3
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="upload-preview" id="posterPreview" style="display: none;">
+                                        <img id="posterPreviewImg" alt="Preview do poster" class="preview-image">
+                                        <div class="preview-overlay">
+                                            <button type="button" class="preview-remove" onclick="removeUpload('poster')" aria-label="Remover imagem">
+                                                🗑️
+                                            </button>
+                                            <button type="button" class="preview-edit" onclick="editUpload('poster')" aria-label="Editar imagem">
+                                                ✏️
+                                            </button>
+                                        </div>
+                                        <div class="preview-info">
+                                            <span class="file-name" id="posterFileName"></span>
+                                            <span class="file-size" id="posterFileSize"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <small id="poster-help" class="field-help">
+                                    Imagem principal da série que aparecerá no catálogo. Use uma imagem de alta qualidade com proporção 2:3 (altura maior que largura).
+                                </small>
+                                <div id="poster-error" class="field-error" role="alert" aria-live="polite"></div>
+                            </div>
+
+                            <!-- Upload de Backdrop (Opcional) -->
+                            <div class="form-field form-field--full">
+                                <label for="imagem_backdrop" class="field-label">
+                                    <span class="label-icon">🌅</span>
+                                    Imagem de Fundo (Opcional)
+                                </label>
+                                
+                                <div class="file-upload-area" id="backdropUploadArea">
+                                    <input type="file" 
+                                           id="imagem_backdrop" 
+                                           name="imagem_backdrop" 
+                                           class="file-input"
+                                           accept="image/jpeg,image/jpg,image/png,image/webp"
+                                           aria-describedby="backdrop-help">
+                                    
+                                    <div class="upload-placeholder" id="backdropPlaceholder">
+                                        <div class="upload-icon">🎬</div>
+                                        <div class="upload-text">
+                                            <p class="upload-primary">Adicionar imagem de fundo</p>
+                                            <p class="upload-secondary">Imagem panorâmica da série</p>
+                                        </div>
+                                        <div class="upload-specs">
+                                            JPG, PNG, WEBP • Máx. 10MB • Proporção recomendada: 16:9
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="upload-preview" id="backdropPreview" style="display: none;">
+                                        <img id="backdropPreviewImg" alt="Preview do backdrop" class="preview-image preview-image--landscape">
+                                        <div class="preview-overlay">
+                                            <button type="button" class="preview-remove" onclick="removeUpload('backdrop')" aria-label="Remover imagem">
+                                                🗑️
+                                            </button>
+                                            <button type="button" class="preview-edit" onclick="editUpload('backdrop')" aria-label="Editar imagem">
+                                                ✏️
+                                            </button>
+                                        </div>
+                                        <div class="preview-info">
+                                            <span class="file-name" id="backdropFileName"></span>
+                                            <span class="file-size" id="backdropFileSize"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <small id="backdrop-help" class="field-help">
+                                    Imagem panorâmica que será usada como fundo na página de detalhes. Use proporção 16:9 para melhor resultado.
+                                </small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção: Revisão -->
+                    <section class="form-section" data-step="4" aria-labelledby="review-title">
+                        <header class="section-header">
+                            <h2 id="review-title" class="section-title">
+                                <span class="section-icon">👀</span>
+                                Revisão Final
+                            </h2>
+                            <p class="section-subtitle">Confira todas as informações antes de publicar</p>
+                        </header>
+
+                        <!-- Preview Card -->
+                        <div class="review-preview">
+                            <h3 class="preview-title">Preview da Série</h3>
+                            
+                            <div class="preview-card">
+                                <div class="preview-poster">
+                                    <div class="poster-placeholder" id="reviewPosterPreview">
+                                        <span class="placeholder-icon">📺</span>
+                                        <span class="placeholder-text">Poster da série</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="preview-content">
+                                    <h4 class="preview-series-title" id="reviewTitle">Título da série aparecerá aqui</h4>
+                                    
+                                    <div class="preview-meta">
+                                        <span class="preview-genre" id="reviewGenre">Gênero</span>
+                                        <span class="preview-year" id="reviewYear">Ano</span>
+                                        <span class="preview-status" id="reviewStatus">Status</span>
+                                    </div>
+                                    
+                                    <p class="preview-description" id="reviewDescription">
+                                        A descrição da série aparecerá aqui conforme você digita...
+                                    </p>
+                                    
+                                    <div class="preview-details">
+                                        <div class="detail-row">
+                                            <span class="detail-key">País:</span>
+                                            <span class="detail-value" id="reviewPais">—</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-key">Idioma:</span>
+                                            <span class="detail-value" id="reviewIdioma">—</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-key">Classificação:</span>
+                                            <span class="detail-value" id="reviewClassificacao">—</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Validação Final -->
+                        <div class="validation-checklist">
+                            <h3 class="checklist-title">Lista de Verificação</h3>
+                            
+                            <div class="checklist-items">
+                                <div class="checklist-item" id="check-titulo">
+                                    <span class="check-icon">⏳</span>
+                                    <span class="check-text">Título preenchido e claro</span>
+                                </div>
+                                <div class="checklist-item" id="check-descricao">
+                                    <span class="check-icon">⏳</span>
+                                    <span class="check-text">Descrição completa (mínimo 50 caracteres)</span>
+                                </div>
+                                <div class="checklist-item" id="check-ano">
+                                    <span class="check-icon">⏳</span>
+                                    <span class="check-text">Ano válido informado</span>
+                                </div>
+                                <div class="checklist-item" id="check-genero">
+                                    <span class="check-icon">⏳</span>
+                                    <span class="check-text">Gênero selecionado</span>
+                                </div>
+                                <div class="checklist-item" id="check-poster">
+                                    <span class="check-icon">⏳</span>
+                                    <span class="check-text">Poster principal adicionado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Navegação entre Seções -->
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn--secondary btn--nav" id="prevBtn" style="display: none;">
+                            <span class="btn-icon">←</span>
+                            Anterior
+                        </button>
+                        
+                        <div class="nav-spacer"></div>
+                        
+                        <button type="button" class="btn btn--outline btn--nav" id="saveAsDraftBtn">
+                            <span class="btn-icon">📄</span>
+                            Salvar Rascunho
+                        </button>
+                        
+                        <button type="button" class="btn btn--primary btn--nav" id="nextBtn">
+                            Próximo
+                            <span class="btn-icon">→</span>
+                        </button>
+                        
+                        <button type="submit" class="btn btn--success btn--nav" id="submitBtn" style="display: none;">
+                            <span class="btn-icon">✅</span>
+                            Criar Série
+                        </button>
+                    </div>
+
+                    <!-- Ações Secundárias -->
+                    <div class="secondary-actions">
+                        <a href="/catalogo" class="btn btn--ghost">
+                            <span class="btn-icon">↩️</span>
+                            Cancelar e Voltar
+                        </a>
+                        
+                        <button type="button" class="btn btn--ghost" onclick="resetForm()">
+                            <span class="btn-icon">🔄</span>
+                            Limpar Formulário
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Confirmação de Saída -->
+    <dialog id="exitConfirmModal" class="confirmation-modal" aria-labelledby="exit-title">
+        <div class="modal-content">
+            <h3 id="exit-title" class="modal-title">
+                <span class="modal-icon">⚠️</span>
+                Sair sem Salvar?
+            </h3>
+            
+            <div class="modal-body">
+                <p>Você tem alterações não salvas. Deseja realmente sair?</p>
+                <p class="modal-note">Todas as informações preenchidas serão perdidas.</p>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn--secondary" onclick="document.getElementById('exitConfirmModal').close()">
+                    Continuar Editando
+                </button>
+                <button type="button" class="btn btn--outline" onclick="saveAsDraft()">
+                    Salvar Rascunho
+                </button>
+                <button type="button" class="btn btn--danger" onclick="confirmExit()">
+                    Sair sem Salvar
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Modal de Sucesso -->
+    <dialog id="successModal" class="success-modal" aria-labelledby="success-title">
+        <div class="modal-content">
+            <h3 id="success-title" class="modal-title">
+                <span class="modal-icon">🎉</span>
+                Série Criada com Sucesso!
+            </h3>
+            
+            <div class="modal-body">
+                <p>A série <strong id="createdSeriesTitle"></strong> foi adicionada ao catálogo.</p>
+                <div class="success-actions">
+                    <a href="#" id="viewSer<div class="success-actions">
+    <a href="#" id="viewSeriesLink" class="btn btn--primary">
+        <span class="btn-icon">👁️</span>
+        Ver Série
+    </a>
+    <a href="/series/criar" class="btn btn--outline">
+        <span class="btn-icon">➕</span>
+        Criar Outra Série
+    </a>
+    <a href="/catalogo" class="btn btn--ghost">
+        <span class="btn-icon">📺</span>
+        Voltar ao Catálogo
+    </a>
+</div>
+</div>
+</dialog>
+
+<!-- Modal de Erro -->
+<dialog id="errorModal" class="error-modal" aria-labelledby="error-title">
+    <div class="modal-content">
+        <h3 id="error-title" class="modal-title">
+            <span class="modal-icon">❌</span>
+            Erro ao Criar Série
+        </h3>
+        
+        <div class="modal-body">
+            <p id="errorMessage">Ocorreu um erro ao tentar criar a série. Por favor, tente novamente.</p>
+            <div class="error-details" id="errorDetails" style="display: none;">
+                <h4>Detalhes do Erro:</h4>
+                <pre id="errorDetailsText"></pre>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn btn--secondary" onclick="document.getElementById('errorModal').close()">
+                Fechar
+            </button>
+            <button type="button" class="btn btn--primary" onclick="retrySubmission()">
+                <span class="btn-icon">🔄</span>
+                Tentar Novamente
+            </button>
+            <button type="button" class="btn btn--outline" onclick="showErrorDetails()" id="showDetailsBtn">
+                <span class="btn-icon">🔍</span>
+                Ver Detalhes
+            </button>
+        </div>
+    </div>
+</dialog>
+
+<!-- Modal de Confirmação de Rascunho -->
+<dialog id="draftConfirmModal" class="confirmation-modal" aria-labelledby="draft-title">
+    <div class="modal-content">
+        <h3 id="draft-title" class="modal-title">
+            <span class="modal-icon">💾</span>
+            Salvar como Rascunho?
+        </h3>
+        
+        <div class="modal-body">
+            <p>Deseja salvar as informações preenchidas como rascunho?</p>
+            <p class="modal-note">Você poderá continuar editando posteriormente.</p>
+            
+            <div class="draft-options">
+                <label class="option-label">
+                    <input type="checkbox" id="draftNotify" checked>
+                    <span class="checkmark"></span>
+                    Receber lembrete para completar amanhã
+                </label>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn btn--secondary" onclick="document.getElementById('draftConfirmModal').close()">
+                Continuar Editando
+            </button>
+            <button type="button" class="btn btn--outline" onclick="saveDraft(false)">
+                Salvar sem Lembrete
+            </button>
+            <button type="button" class="btn btn--primary" onclick="saveDraft(true)">
+                <span class="btn-icon">💾</span>
+                Salvar Rascunho
+            </button>
+        </div>
+    </div>
+</dialog>
+
+<!-- Modal de Carregamento -->
+<dialog id="loadingModal" class="loading-modal" aria-labelledby="loading-title">
+    <div class="modal-content">
+        <h3 id="loading-title" class="modal-title">
+            <span class="modal-icon">⏳</span>
+            Processando...
+        </h3>
+        
+        <div class="modal-body">
+            <p id="loadingMessage">Salvando suas informações...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="loadingProgress"></div>
+            </div>
+            <p class="modal-note">Não feche esta página.</p>
+        </div>
+    </div>
+</dialog>
+
+<!-- Footer da Página -->
+<footer class="page-footer page-footer--form" role="contentinfo">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4 class="footer-title">Ajuda com o Formulário</h4>
+            <ul class="footer-links">
+                <li><a href="/ajuda/formulario-series" class="footer-link">📝 Guia de Preenchimento</a></li>
+                <li><a href="/ajuda/imagens" class="footer-link">🖼️ Requisitos de Imagem</a></li>
+                <li><a href="/ajuda/categorizacao" class="footer-link">🏷️ Como Categorizar</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-section">
+            <h4 class="footer-title">Dicas Rápidas</h4>
+            <div class="tips-container">
+                <div class="tip-item">
+                    <span class="tip-icon">💡</span>
+                    <span class="tip-text">Use títulos originais para melhor busca</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">💡</span>
+                    <span class="tip-text">Sinopses detalhadas aumentam engajamento</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">💡</span>
+                    <span class="tip-text">Imagens de qualidade melhoram a experiência</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h4 class="footer-title">Suporte</h4>
+            <div class="support-info">
+                <div class="support-item">
+                    <span class="support-icon">🕒</span>
+                    <span class="support-text">Tempo médio: 5-10 minutos</span>
+                </div>
+                <div class="support-item">
+                    <span class="support-icon">📞</span>
+                    <a href="/suporte" class="support-link">Chat de Ajuda Online</a>
+                </div>
+                <div class="support-item">
+                    <span class="support-icon">📧</span>
+                    <a href="mailto:suporte@seriestv.com" class="support-link">suporte@seriestv.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p class="footer-copyright">
+            &copy; {% now "Y" %} Plataforma Séries TV. 
+            <span class="footer-version">v{{ APP_VERSION }}</span>
+        </p>
+        <p class="footer-notice">
+            Todas as séries são revisadas antes da publicação.
+            <span class="footer-status" id="formStatus">Formulário não salvo</span>
+        </p>
+    </div>
+</footer>
+
+<!-- Sistema de Notificações -->
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Fallback para JavaScript Desabilitado -->
+<noscript>
+    <div class="noscript-warning">
+        <div class="warning-content">
+            <h3>⚠️ JavaScript Necessário</h3>
+            <p>Este formulário requer JavaScript para funcionar corretamente. Habilite o JavaScript para criar séries.</p>
+            <div class="warning-actions">
+                <a href="/catalogo" class="btn btn--secondary">Voltar ao Catálogo</a>
+                <a href="/ajuda/javascript" class="btn btn--outline">Como Habilitar JavaScript</a>
+            </div>
+        </div>
+    </div>
+</noscript>
+
+</main>
+
+<!-- Scripts JavaScript -->
+<script>
+// Configuração global do formulário
+const FORM_CONFIG = {
+    currentStep: 1,
+    totalSteps: 4,
+    hasUnsavedChanges: false,
+    draftAutoSave: true,
+    autoSaveInterval: 30000, // 30 segundos
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    allowedImageTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+};
+
+// Inicialização do formulário
+document.addEventListener('DOMContentLoaded', function() {
+    initializeForm();
+    setupEventListeners();
+    startAutoSave();
+    setupFormValidation();
+});
+
+// Funções de inicialização
+function initializeForm() {
+    updateProgressBar();
+    setupFileUploads();
+    setupRealTimePreview();
+    checkFormStatus();
+}
+
+function setupEventListeners() {
+    // Navegação entre steps
+    document.getElementById('nextBtn').addEventListener('click', nextStep);
+    document.getElementById('prevBtn').addEventListener('click', previousStep);
+    document.getElementById('submitBtn').addEventListener('click', submitForm);
+    
+    // Ações secundárias
+    document.getElementById('saveAsDraftBtn').addEventListener('click', showDraftModal);
+    
+    // Prevenção de saída acidental
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Teclas de atalho
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+}
+
+// Navegação entre steps
+function nextStep() {
+    if (validateCurrentStep()) {
+        FORM_CONFIG.currentStep++;
+        updateFormDisplay();
+        updateProgressBar();
+        
+        if (FORM_CONFIG.currentStep === FORM_CONFIG.totalSteps) {
+            updateReviewPreview();
+            validateFinalChecklist();
+        }
+    }
+}
+
+function previousStep() {
+    FORM_CONFIG.currentStep--;
+    updateFormDisplay();
+    updateProgressBar();
+}
+
+function updateFormDisplay() {
+    // Esconder todas as seções
+    document.querySelectorAll('.form-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Mostrar seção atual
+    const currentSection = document.querySelector(`[data-step="${FORM_CONFIG.currentStep}"]`);
+    if (currentSection) {
+        currentSection.classList.add('active');
+    }
+    
+    // Atualizar botões de navegação
+    updateNavigationButtons();
+}
+
+function updateNavigationButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Botão Anterior
+    if (FORM_CONFIG.currentStep > 1) {
+        prevBtn.style.display = 'flex';
+    } else {
+        prevBtn.style.display = 'none';
+    }
+    
+    // Botão Próximo/Submit
+    if (FORM_CONFIG.currentStep < FORM_CONFIG.totalSteps) {
+        nextBtn.style.display = 'flex';
+        submitBtn.style.display = 'none';
+    } else {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'flex';
+    }
+}
+
+// Validação do formulário
+function validateCurrentStep() {
+    const currentSection = document.querySelector(`[data-step="${FORM_CONFIG.currentStep}"]`);
+    const requiredFields = currentSection.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            showFieldError(field, 'Este campo é obrigatório');
+            isValid = false;
+        } else {
+            clearFieldError(field);
+        }
+    });
+    
+    // Validações específicas por step
+    switch (FORM_CONFIG.currentStep) {
+        case 1:
+            isValid = validateStep1() && isValid;
+            break;
+        case 2:
+            isValid = validateStep2() && isValid;
+            break;
+        case 3:
+            isValid = validateStep3() && isValid;
+            break;
+    }
+    
+    if (!isValid) {
+        showToast('Por favor, corrija os erros antes de continuar', 'error');
+    }
+    
+    return isValid;
+}
+
+function validateStep1() {
+    let isValid = true;
+    const titulo = document.getElementById('titulo');
+    const ano = document.getElementById('ano');
+    const genero = document.getElementById('genero');
+    
+    // Validar título
+    if (titulo.value.length < 2) {
+        showFieldError(titulo, 'O título deve ter pelo menos 2 caracteres');
+        isValid = false;
+    }
+    
+    // Validar ano
+    const currentYear = new Date().getFullYear();
+    if (ano.value < 1900 || ano.value > currentYear + 5) {
+        showFieldError(ano, `O ano deve estar entre 1900 e ${currentYear + 5}`);
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+// Sistema de upload de arquivos
+function setupFileUploads() {
+    setupFileUpload('poster');
+    setupFileUpload('backdrop');
+}
+
+function setupFileUpload(type) {
+    const uploadArea = document.getElementById(`${type}UploadArea`);
+    const fileInput = document.getElementById(`imagem_${type}`);
+    const placeholder = document.getElementById(`${type}Placeholder`);
+    const preview = document.getElementById(`${type}Preview`);
+    const previewImg = document.getElementById(`${type}PreviewImg`);
+    const fileName = document.getElementById(`${type}FileName`);
+    const fileSize = document.getElementById(`${type}FileSize`);
+    
+    if (!uploadArea || !fileInput) return;
+    
+    // Click para abrir file dialog
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            handleFileSelect(e.dataTransfer.files[0], type);
+        }
+    });
+    
+    // Change event
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            handleFileSelect(e.target.files[0], type);
+        }
+    });
+}
+
+function handleFileSelect(file, type) {
+    // Validar arquivo
+    if (!validateFile(file, type)) return;
+    
+    // Atualizar UI
+    updateFilePreview(file, type);
+    FORM_CONFIG.hasUnsavedChanges = true;
+    updateFormStatus();
+}
+
+function validateFile(file, type) {
+    // Validar tipo
+    if (!FORM_CONFIG.allowedImageTypes.includes(file.type)) {
+        showToast('Tipo de arquivo não permitido. Use JPG, PNG ou WEBP.', 'error');
+        return false;
+    }
+    
+    // Validar tamanho
+    if (file.size > FORM_CONFIG.maxFileSize) {
+        showToast('Arquivo muito grande. Máximo 10MB permitido.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+// Preview em tempo real
+function setupRealTimePreview() {
+    // Título
+    document.getElementById('titulo').addEventListener('input', function() {
+        document.getElementById('reviewTitle').textContent = this.value || 'Título da série aparecerá aqui';
+        updateChecklist('titulo', this.value.length >= 2);
+    });
+    
+    // Descrição
+    document.getElementById('descricao').addEventListener('input', function() {
+        document.getElementById('reviewDescription').textContent = this.value || 'A descrição da série aparecerá aqui conforme você digita...';
+        updateChecklist('descricao', this.value.length >= 50);
+    });
+    
+    // Ano
+    document.getElementById('ano').addEventListener('input', function() {
+        document.getElementById('reviewYear').textContent = this.value || 'Ano';
+        updateChecklist('ano', this.value.length === 4 && this.value >= 1900);
+    });
+    
+    // Gênero
+    document.getElementById('genero').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        document.getElementById('reviewGenre').textContent = selectedOption.text || 'Gênero';
+        updateChecklist('genero', this.value !== '');
+    });
+}
+
+function updateReviewPreview() {
+    // Atualizar todos os campos do preview
+    const fields = {
+        'titulo': 'reviewTitle',
+        'descricao': 'reviewDescription', 
+        'ano': 'reviewYear',
+        'genero': 'reviewGenre',
+        'pais_origem': 'reviewPais',
+        'idioma_original': 'reviewIdioma',
+        'classificacao_etaria': 'reviewClassificacao',
+        'status': 'reviewStatus'
+    };
+    
+    for (const [fieldId, previewId] of Object.entries(fields)) {
+        const field = document.getElementById(fieldId);
+        const preview = document.getElementById(previewId);
+        
+        if (field && preview) {
+            if (field.type === 'select-one') {
+                const selectedOption = field.options[field.selectedIndex];
+                preview.textContent = selectedOption.text || '—';
+            } else {
+                preview.textContent = field.value || '—';
+            }
+        }
+    }
+}
+
+// Sistema de autosave
+function startAutoSave() {
+    if (FORM_CONFIG.draftAutoSave) {
+        setInterval(() => {
+            if (FORM_CONFIG.hasUnsavedChanges) {
+                saveDraftSilently();
+            }
+        }, FORM_CONFIG.autoSaveInterval);
+    }
+}
+
+function saveDraftSilently() {
+    // Implementar save automático silencioso
+    console.log('Auto-saving draft...');
+    FORM_CONFIG.hasUnsavedChanges = false;
+    updateFormStatus();
+}
+
+// Funções de utilidade
+function showToast(message, type = 'info') {
+    // Implementar sistema de toast
+    console.log(`${type}: ${message}`);
+}
+
+function showFieldError(field, message) {
+    const errorElement = document.getElementById(`${field.id}-error`);
+    if (errorElement) {
+        errorElement.textContent = message;
+        field.classList.add('error');
+    }
+}
+
+function clearFieldError(field) {
+    const errorElement = document.getElementById(`${field.id}-error`);
+    if (errorElement) {
+        errorElement.textContent = '';
+        field.classList.remove('error');
+    }
+}
+
+function updateFormStatus() {
+    const statusElement = document.getElementById('formStatus');
+    if (statusElement) {
+        statusElement.textContent = FORM_CONFIG.hasUnsavedChanges ? 
+            'Alterações não salvas' : 'Todas as alterações salvas';
+        statusElement.className = FORM_CONFIG.hasUnsavedChanges ? 
+            'footer-status unsaved' : 'footer-status saved';
+    }
+}
+
+// Exportar funções globais
+window.SeriesForm = {
+    nextStep,
+    previousStep,
+    submitForm,
+    saveDraft,
+    resetForm
+};
+</script>
+
+</body>
+</html>

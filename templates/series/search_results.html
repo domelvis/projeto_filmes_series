@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultados da Busca{% endblock %}
+
+{% block extrastyle %}
+    <!-- Inclui Tailwind CSS via CDN (Garantia de carregamento) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Variáveis de cor (Baseadas no seu LAYOUT.CSS) */
+        :root {
+            --color-primary: #1e88e5; /* Azul Principal (Sua paleta) */
+            --color-primary-dark: #1565c0; /* Azul Escuro (Sua paleta) */
+            --color-background: #f4f4f9; /* Fundo Claro (Não usado aqui, mas mantido) */
+            --color-background-dark: #212529; /* Fundo do Conteúdo/Header (Seu Dark Gray) */
+            --color-text: #333; /* Texto Escuro */
+            --color-text-light: #f8f9fa; /* Texto Off-White */
+            --color-card-dark: #343a40; /* Card um pouco mais claro que o fundo */
+            --border-radius: 8px;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        .dark-bg-content {
+            background-color: var(--color-background-dark); /* Fundo usando seu Dark Gray */
+            font-family: 'Inter', sans-serif;
+            /* Usamos min-h-screen aqui, mas você pode querer ajustar se o base.html tiver header/footer */
+            min-height: calc(100vh); 
+        }
+        
+        .card-item {
+            background-color: var(--color-card-dark); /* Fundo do card */
+            border-radius: var(--border-radius);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-item:hover {
+            transform: scale(1.05); /* Efeito de zoom ao passar o mouse, como na Netflix */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+        }
+
+        /* Cores utilitárias mapeadas */
+        .text-primary { color: var(--color-primary); }
+        .border-primary { border-color: var(--color-primary); }
+        .hover\:text-primary-dark:hover { color: var(--color-primary-dark); }
+        .text-color-light { color: var(--color-text-light); }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="dark-bg-content text-color-light py-10 px-4 md:px-10">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- Título Principal -->
+            <h1 class="text-4xl font-bold mb-8 text-white border-l-4 border-primary pl-4">
+                Resultados da Busca
+            </h1>
+
+            {% if series %}
+                
+                <!-- Layout de Grade Responsivo (Estilo Plataforma de Streaming) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                    
+                    {% for serie in series %}
+                        <!-- Card de Item -->
+                        <div class="card-item rounded-lg overflow-hidden cursor-pointer">
+                            <a href="{% url 'series:detail' pk=serie.pk %}">
+                                <!-- Imagem (Use a URL da capa da série se disponível) -->
+                                <img src="https://placehold.co/500x750/343a40/1e88e5?text={{ serie.titulo|urlencode }}" 
+                                     alt="Capa de {{ serie.titulo }}" 
+                                     class="w-full h-auto object-cover aspect-[2/3]">
+                                
+                                <!-- Informações da Série -->
+                                <div class="p-3">
+                                    <h2 class="text-lg font-semibold truncate text-color-light">{{ serie.titulo }}</h2>
+                                    <p class="text-sm text-gray-400">{{ serie.ano }} | {{ serie.genero }}</p>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                    
+                </div>
+                
+            {% else %}
+                <!-- Mensagem de Sem Resultados -->
+                <div class="text-center py-20">
+                    <!-- Ícone de lupa -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-primary mb-4" viewBox="0 0 24 24" fill="currentColor" style="color: var(--color-primary);">
+                        <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd" />
+                    </svg>
+                    <p class="text-xl text-gray-300">Não encontramos resultados para sua busca.</p>
+                    <a href="{% url 'home' %}" class="mt-6 inline-block py-3 px-6 text-base font-bold rounded-md uppercase tracking-wider transform hover:scale-[1.03] focus:outline-none focus:ring-4 focus:ring-opacity-50" style="background-color: var(--color-primary); color: var(--color-text-light); --tw-ring-color: var(--color-primary);">
+                        Voltar para a Página Inicial
+                    </a>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

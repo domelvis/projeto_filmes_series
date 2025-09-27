@@ -1,0 +1,744 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Perfil - Plataforma Séries TV{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Atualize suas informações pessoais, avatar e preferências na Plataforma Séries TV.">
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block body_class %}profile-edit-page{% endblock %}
+{% block page_id %}profile-edit{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item">
+    <a href="{% url 'users:profile' %}">
+        <i class="bi bi-person"></i> Meu Perfil
+    </a>
+</li>
+<li class="breadcrumb-item active" aria-current="page">
+    <i class="bi bi-pencil"></i> Editar Perfil
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="profile-edit-container">
+    <div class="container">
+        <!-- Header da Página -->
+        <header class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">
+                    <span class="title-icon">✏️</span>
+                    Editar Perfil
+                </h1>
+                <p class="page-subtitle">
+                    Atualize suas informações pessoais e preferências na plataforma
+                </p>
+            </div>
+            
+            <!-- Progresso do Formulário -->
+            <div class="form-progress">
+                <div class="progress-steps">
+                    <div class="step active">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Informações Pessoais</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Preferências</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Revisão</span>
+                    </div>
+                </div>
+            </div>
+               <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Seus outros links CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+        </header>
+
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+                <!-- Formulário Principal -->
+                <form method="post" enctype="multipart/form-data" class="profile-edit-form" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Seção: Avatar e Identificação Visual -->
+                    <section class="form-section active" data-step="1" aria-labelledby="avatar-section-title">
+                        <header class="section-header">
+                            <h2 id="avatar-section-title" class="section-title">
+                                <span class="section-icon">🖼️</span>
+                                Identificação Visual
+                            </h2>
+                            <p class="section-subtitle">Personalize sua presença na plataforma</p>
+                        </header>
+
+                        <div class="avatar-section">
+                            <div class="avatar-content">
+                                <!-- Avatar Atual -->
+                                <div class="current-avatar">
+                                    <label class="avatar-label">Avatar Atual</label>
+                                    <div class="avatar-preview">
+                                        {% if form.instance.avatar %}
+                                            <img src="{{ form.instance.avatar.url }}" 
+                                                 class="avatar-image" 
+                                                 alt="Seu avatar atual"
+                                                 id="currentAvatar">
+                                        {% else %}
+                                            <div class="avatar-placeholder" id="currentAvatar">
+                                                <span class="placeholder-icon">👤</span>
+                                                <span class="placeholder-text">Sem avatar</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Upload de Novo Avatar -->
+                                <div class="avatar-upload">
+                                    <label for="{{ form.avatar.id_for_label }}" class="upload-label">
+                                        <span class="label-icon">📷</span>
+                                        Novo Avatar
+                                    </label>
+                                    
+                                    <div class="upload-area" id="avatarUploadArea">
+                                        <input type="file" 
+                                               id="{{ form.avatar.id_for_label }}" 
+                                               name="{{ form.avatar.name }}"
+                                               class="upload-input"
+                                               accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                                               aria-describedby="avatar-help avatar-error">
+                                        
+                                        <div class="upload-placeholder" id="avatarPlaceholder">
+                                            <div class="upload-icon">📁</div>
+                                            <div class="upload-text">
+                                                <p class="upload-primary">Clique para selecionar uma imagem</p>
+                                                <p class="upload-secondary">ou arraste e solte aqui</p>
+                                            </div>
+                                            <div class="upload-specs">
+                                                JPG, PNG, WEBP, GIF • Máx. 5MB • Recomendado: 200x200px
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="upload-preview" id="avatarPreview" style="display: none;">
+                                            <img id="previewImage" class="preview-image" alt="Pré-visualização">
+                                            <div class="preview-actions">
+                                                <button type="button" class="btn-action" onclick="removeAvatar()" aria-label="Remover imagem">
+                                                    🗑️
+                                                </button>
+                                                <button type="button" class="btn-action" onclick="rotateAvatar()" aria-label="Rotacionar imagem">
+                                                    🔄
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <small id="avatar-help" class="field-help">
+                                        Use uma imagem quadrada para melhor resultado. Tamanho recomendado: 200x200 pixels.
+                                    </small>
+                                    {% if form.avatar.errors %}
+                                    <div id="avatar-error" class="field-error" role="alert" aria-live="polite">
+                                        {% for error in form.avatar.errors %}
+                                        <span class="error-icon">❌</span>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção: Informações Pessoais -->
+                    <section class="form-section" data-step="2" aria-labelledby="personal-info-title">
+                        <header class="section-header">
+                            <h2 id="personal-info-title" class="section-title">
+                                <span class="section-icon">📝</span>
+                                Informações Pessoais
+                            </h2>
+                            <p class="section-subtitle">Compartilhe informações sobre você (opcional)</p>
+                        </header>
+
+                        <div class="form-grid">
+                            <!-- Biografia -->
+                            <div class="form-field form-field--full">
+                                <label for="{{ form.bio.id_for_label }}" class="field-label">
+                                    <span class="label-icon">📖</span>
+                                    Biografia
+                                </label>
+                                <div class="field-wrapper">
+                                    <textarea id="{{ form.bio.id_for_label }}" 
+                                              name="{{ form.bio.name }}"
+                                              class="field-textarea"
+                                              placeholder="Conte um pouco sobre você, seus gostos em séries, gêneros favoritos..."
+                                              rows="5"
+                                              maxlength="500"
+                                              aria-describedby="bio-help bio-error">{{ form.bio.value|default:'' }}</textarea>
+                                    <div class="field-counter">
+                                        <span class="counter-current">0</span>/<span class="counter-max">500</span>
+                                    </div>
+                                </div>
+                                <small id="bio-help" class="field-help">
+                                    Compartilhe seus gostos, séries favoritas ou algo sobre você.
+                                </small>
+                                {% if form.bio.errors %}
+                                <div id="bio-error" class="field-error" role="alert" aria-live="polite">
+                                    {% for error in form.bio.errors %}
+                                    <span class="error-icon">❌</span>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Data de Nascimento e Website -->
+                            <div class="form-field">
+                                <label for="{{ form.data_nascimento.id_for_label }}" class="field-label">
+                                    <span class="label-icon">🎂</span>
+                                    Data de Nascimento
+                                </label>
+                                <div class="field-wrapper">
+                                    <input type="date" 
+                                           id="{{ form.data_nascimento.id_for_label }}" 
+                                           name="{{ form.data_nascimento.name }}"
+                                           class="field-input"
+                                           value="{{ form.data_nascimento.value|default:'' }}"
+                                           max="{{ today|date:'Y-m-d' }}"
+                                           aria-describedby="birthdate-help">
+                                </div>
+                                <small id="birthdate-help" class="field-help">
+                                    Sua idade não será exibida publicamente.
+                                </small>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="{{ form.website.id_for_label }}" class="field-label">
+                                    <span class="label-icon">🌐</span>
+                                    Website ou Rede Social
+                                </label>
+                                <div class="field-wrapper">
+                                    <input type="url" 
+                                           id="{{ form.website.id_for_label }}" 
+                                           name="{{ form.website.name }}"
+                                           class="field-input"
+                                           placeholder="https://seusite.com"
+                                           value="{{ form.website.value|default:'' }}"
+                                           aria-describedby="website-help website-error">
+                                    <span class="field-icon">🔗</span>
+                                </div>
+                                <small id="website-help" class="field-help">
+                                    Seu site pessoal, blog ou perfil em rede social.
+                                </small>
+                                {% if form.website.errors %}
+                                <div id="website-error" class="field-error" role="alert" aria-live="polite">
+                                    {% for error in form.website.errors %}
+                                    <span class="error-icon">❌</span>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção: Preferências -->
+                    <section class="form-section" data-step="3" aria-labelledby="preferences-title">
+                        <header class="section-header">
+                            <h2 id="preferences-title" class="section-title">
+                                <span class="section-icon">⚙️</span>
+                                Preferências
+                            </h2>
+                            <p class="section-subtitle">Configure como você usa a plataforma</p>
+                        </header>
+
+                        <div class="preferences-grid">
+                            <!-- Configurações de Notificação -->
+                            <div class="preference-group">
+                                <h4 class="preference-title">
+                                    <span class="preference-icon">🔔</span>
+                                    Notificações
+                                </h4>
+                                
+                                <div class="preference-options">
+                                    <label class="option-checkbox">
+                                        <input type="checkbox" name="notify_new_episodes" checked>
+                                        <span class="checkmark"></span>
+                                        <span class="option-label">Novos episódios das minhas séries</span>
+                                    </label>
+                                    
+                                    <label class="option-checkbox">
+                                        <input type="checkbox" name="notify_discussions" checked>
+                                        <span class="checkmark"></span>
+                                        <span class="option-label">Respostas nas minhas discussões</span>
+                                    </label>
+                                    
+                                    <label class="option-checkbox">
+                                        <input type="checkbox" name="notify_newsletter">
+                                        <span class="checkmark"></span>
+                                        <span class="option-label">Newsletter semanal</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Configurações de Privacidade -->
+                            <div class="preference-group">
+                                <h4 class="preference-title">
+                                    <span class="preference-icon">👁️</span>
+                                    Privacidade
+                                </h4>
+                                
+                                <div class="preference-options">
+                                    <label class="option-radio">
+                                        <input type="radio" name="profile_visibility" value="public" checked>
+                                        <span class="radiomark"></span>
+                                        <span class="option-label">Perfil público</span>
+                                    </label>
+                                    
+                                    <label class="option-radio">
+                                        <input type="radio" name="profile_visibility" value="private">
+                                        <span class="radiomark"></span>
+                                        <span class="option-label">Perfil privado</span>
+                                    </label>
+                                    
+                                    <label class="option-checkbox">
+                                        <input type="checkbox" name="show_activity" checked>
+                                        <span class="checkmark"></span>
+                                        <span class="option-label">Mostrar minha atividade</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Navegação do Formulário -->
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn--secondary btn--nav" id="prevBtn" style="display: none;">
+                            <span class="btn-icon">←</span>
+                            Voltar
+                        </button>
+                        
+                        <div class="nav-spacer"></div>
+                        
+                        <button type="button" class="btn btn--outline btn--nav" id="saveDraftBtn">
+                            <span class="btn-icon">💾</span>
+                            Salvar Rascunho
+                        </button>
+                        
+                        <button type="button" class="btn btn--primary btn--nav" id="nextBtn">
+                            Continuar
+                            <span class="btn-icon">→</span>
+                        </button>
+                        
+                        <button type="submit" class="btn btn--success btn--nav" id="submitBtn" style="display: none;">
+                            <span class="btn-icon">✅</span>
+                            Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Painel de Informações da Conta -->
+                <aside class="account-info-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <span class="panel-icon">📊</span>
+                            Informações da Conta
+                        </h3>
+                    </div>
+                    
+                    <div class="panel-content">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-icon">👤</span>
+                                <div class="info-content">
+                                    <span class="info-label">Nome de Usuário</span>
+                                    <span class="info-value">{{ user.username }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-icon">📧</span>
+                                <div class="info-content">
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value">{{ user.email }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-icon">📅</span>
+                                <div class="info-content">
+                                    <span class="info-label">Membro desde</span>
+                                    <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-icon">🕒</span>
+                                <div class="info-content">
+                                    <span class="info-label">Último acesso</span>
+                                    <span class="info-value">
+                                        {% if user.last_login %}
+                                            {{ user.last_login|date:"d/m/Y H:i" }}
+                                        {% else %}
+                                            Nunca acessou
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="panel-actions">
+                            <a href="{% url 'users:password_change' %}" class="btn btn--outline btn--sm">
+                                <span class="btn-icon">🔒</span>
+                                Alterar Senha
+                            </a>
+                            <a href="/suporte" class="btn btn--ghost btn--sm">
+                                <span class="btn-icon">💬</span>
+                                Suporte
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<dialog id="confirmationModal" class="confirmation-modal" aria-labelledby="confirmation-title">
+    <div class="modal-content">
+        <h3 id="confirmation-title" class="modal-title">
+            <span class="modal-icon">💾</span>
+            Salvar Alterações?
+        </h3>
+        
+        <div class="modal-body">
+            <p>Você está prestes a salvar as alterações no seu perfil.</p>
+            <div class="changes-summary">
+                <h4>Alterações realizadas:</h4>
+                <ul id="changesList"></ul>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn btn--secondary" onclick="closeConfirmationModal()">
+                Continuar Editando
+            </button>
+            <button type="button" class="btn btn--primary" onclick="submitForm()">
+                <span class="btn-icon">✅</span>
+                Sim, Salvar Alterações
+            </button>
+        </div>
+    </div>
+</dialog>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Configuração do formulário de perfil
+const PROFILE_CONFIG = {
+    currentStep: 1,
+    totalSteps: 3,
+    hasUnsavedChanges: false,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+    allowedImageTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+};
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    initializeProfileForm();
+    setupAvatarUpload();
+    setupFormNavigation();
+    setupRealTimeValidation();
+});
+
+// Inicialização do formulário
+function initializeProfileForm() {
+    // Adicionar classes Bootstrap aos campos Django
+    styleDjangoFields();
+    
+    // Configurar contador de caracteres da biografia
+    setupBioCounter();
+    
+    // Configurar validação em tempo real
+    setupFieldValidation();
+}
+
+// Upload de avatar
+function setupAvatarUpload() {
+    const uploadArea = document.getElementById('avatarUploadArea');
+    const fileInput = document.getElementById('{{ form.avatar.id_for_label }}');
+    const preview = document.getElementById('avatarPreview');
+    const previewImg = document.getElementById('previewImage');
+    
+    if (!uploadArea || !fileInput) return;
+    
+    // Click para abrir file dialog
+    uploadArea.addEventListener('click', (e) => {
+        if (!e.target.closest('.preview-actions')) {
+            fileInput.click();
+        }
+    });
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            handleAvatarSelect(e.dataTransfer.files[0]);
+        }
+    });
+    
+    // Change event
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            handleAvatarSelect(e.target.files[0]);
+        }
+    });
+}
+
+function handleAvatarSelect(file) {
+    if (!validateAvatarFile(file)) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('previewImage').src = e.target.result;
+        document.getElementById('avatarPreview').style.display = 'block';
+        document.getElementById('avatarPlaceholder').style.display = 'none';
+        PROFILE_CONFIG.hasUnsavedChanges = true;
+        updateFormStatus();
+    };
+    reader.readAsDataURL(file);
+}
+
+function validateAvatarFile(file) {
+    if (!PROFILE_CONFIG.allowedImageTypes.includes(file.type)) {
+        showToast('Tipo de arquivo não permitido. Use JPG, PNG, WEBP ou GIF.', 'error');
+        return false;
+    }
+    
+    if (file.size > PROFILE_CONFIG.maxFileSize) {
+        showToast('Arquivo muito grande. Máximo 5MB permitido.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+function removeAvatar() {
+    const fileInput = document.getElementById('{{ form.avatar.id_for_label }}');
+    const preview = document.getElementById('avatarPreview');
+    const placeholder = document.getElementById('avatarPlaceholder');
+    
+    fileInput.value = '';
+    preview.style.display = 'none';
+    placeholder.style.display = 'block';
+    PROFILE_CONFIG.hasUnsavedChanges = true;
+    updateFormStatus();
+}
+
+function rotateAvatar() {
+    // Implementar rotação de imagem
+    showToast('Funcionalidade de rotação em desenvolvimento', 'info');
+}
+
+// Navegação do formulário
+function setupFormNavigation() {
+    document.getElementById('nextBtn').addEventListener('click', nextStep);
+    document.getElementById('prevBtn').addEventListener('click', previousStep);
+    document.getElementById('submitBtn').addEventListener('click', showConfirmationModal);
+    document.getElementById('saveDraftBtn').addEventListener('click', saveDraft);
+}
+
+function nextStep() {
+    if (validateCurrentStep()) {
+        PROFILE_CONFIG.currentStep++;
+        updateFormDisplay();
+        updateProgressBar();
+    }
+}
+
+function previousStep() {
+    PROFILE_CONFIG.currentStep--;
+    updateFormDisplay();
+    updateProgressBar();
+}
+
+function updateFormDisplay() {
+    // Esconder todas as seções
+    document.querySelectorAll('.form-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Mostrar seção atual
+    const currentSection = document.querySelector(`[data-step="${PROFILE_CONFIG.currentStep}"]`);
+    if (currentSection) {
+        currentSection.classList.add('active');
+    }
+    
+    // Atualizar botões de navegação
+    updateNavigationButtons();
+}
+
+function updateNavigationButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Botão Voltar
+    prevBtn.style.display = PROFILE_CONFIG.currentStep > 1 ? 'flex' : 'none';
+    
+    // Botões Próximo/Enviar
+    if (PROFILE_CONFIG.currentStep < PROFILE_CONFIG.totalSteps) {
+        nextBtn.style.display = 'flex';
+        submitBtn.style.display = 'none';
+    } else {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'flex';
+    }
+}
+
+// Validação
+function setupRealTimeValidation() {
+    // Validação da biografia
+    const bioField = document.getElementById('{{ form.bio.id_for_label }}');
+    if (bioField) {
+        bioField.addEventListener('input', function() {
+            validateBio(this.value);
+        });
+    }
+    
+    // Validação do website
+    const websiteField = document.getElementById('{{ form.website.id_for_label }}');
+    if (websiteField) {
+        websiteField.addEventListener('blur', function() {
+            validateWebsite(this.value);
+        });
+    }
+}
+
+function validateCurrentStep() {
+    let isValid = true;
+    
+    switch (PROFILE_CONFIG.currentStep) {
+        case 1:
+            // Validação do avatar (opcional)
+            break;
+        case 2:
+            isValid = validatePersonalInfo() && isValid;
+            break;
+        case 3:
+            // Preferências não requerem validação
+            break;
+    }
+    
+    if (!isValid) {
+        showToast('Por favor, corrija os erros antes de continuar', 'error');
+    }
+    
+    return isValid;
+}
+
+function validateBio(value) {
+    const errorElement = document.getElementById('bio-error');
+    const field = document.getElementById('{{ form.bio.id_for_label }}');
+    
+    if (value.length > 500) {
+        showFieldError(field, errorElement, 'Máximo 500 caracteres permitidos');
+        return false;
+    }
+    
+    clearFieldError(field, errorElement);
+    return true;
+}
+
+function validateWebsite(value) {
+    if (!value) return true;
+    
+    const errorElement = document.getElementById('website-error');
+    const field = document.getElementById('{{ form.website.id_for_label }}');
+    
+    try {
+        new URL(value);
+        clearFieldError(field, errorElement);
+        return true;
+    } catch {
+        showFieldError(field, errorElement, 'URL inválida');
+        return false;
+    }
+}
+
+// Funções de utilidade
+function showFieldError(field, errorElement, message) {
+    if (field && errorElement) {
+        field.classList.add('error');
+        errorElement.innerHTML = `<span class="error-icon">❌</span>${message}`;
+        errorElement.style.display = 'block';
+    }
+}
+
+function clearFieldError(field, errorElement) {
+    if (field && errorElement) {
+        field.classList.remove('error');
+        errorElement.style.display = 'none';
+    }
+}
+
+function showToast(message, type = 'info') {
+    // Implementar sistema de toast
+    console.log(`${type}: ${message}`);
+}
+
+function updateFormStatus() {
+    // Atualizar indicador de alterações não salvas
+}
+
+function setupBioCounter() {
+    const bioField = document.getElementById('{{ form.bio.id_for_label }}');
+    const counter = bioField?.parentElement.querySelector('.counter-current');
+    
+    if (bioField && counter) {
+        bioField.addEventListener('input', function() {
+            counter.textContent = this.value.length;
+        });
+        // Inicializar contador
+        counter.textContent = bioField.value.length;
+    }
+}
+
+function styleDjangoFields() {
+    // Aplicar estilos consistentes aos campos do Django
+    const fields = [
+        '{{ form.bio.id_for_label }}',
+        '{{ form.avatar.id_for_label }}',
+        '{{ form.data_nascimento.id_for_label }}',
+        '{{ form.website.id_for_label }}'
+    ];
+    
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.classList.add('field-input');
+        }
+    });
+}
+
+// Exportar funções globais
+window.ProfileEditor = {
+    nextStep,
+    previousStep,
+    removeAvatar,
+    rotateAvatar
+};
+</script>
+{% endblock %}

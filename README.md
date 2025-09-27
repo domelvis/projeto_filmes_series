@@ -1,9 +1,59 @@
-🎬 Séries de TV - Plataforma de Gerenciamento # 🐳 Séries TV - Docker Setup
-https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
-https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white
-https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white
-https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white
-https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white
+🎬 Séries de TV - Plataforma de Gerenciamento # 
+
+🛠 Stack Tecnológica Completa
+🌐 Frontend
+HTML5 📄 - Estrutura semântica
+CSS3 🎨 - Estilos e design responsivo
+JavaScript ⚡ - Interatividade e dinamismo
+
+⚙️ Backend
+Python 🐍 - Linguagem principal
+Django 🅓 - Framework web
+Django REST Framework 🔌 - API RESTful
+
+🗄️ Banco de Dados & Cache
+PostgreSQL 🐘 - Banco relacional principal
+Redis 🔴 - Cache e mensageria
+
+🐳 Infraestrutura
+Docker 🐳 - Containerização
+Docker Compose 🎯 - Orquestração
+Nginx 🟢 - Proxy reverso e servidor web
+
+🔄 Ferramentas Adicionais
+Celery 🌿 - Tarefas assíncronas
+Flower 🌸 - Monitoramento Celery
+Gunicorn 🦄 - Servidor WSGI
+Git 📚 - Controle de versão
+
+🎯 Stack Completa em Formato Visual
+text
+📄 HTML5   🎨 CSS3   ⚡ JavaScript   🐍 Python   🅓 Django
+🔌 Django REST   🐘 PostgreSQL   🔴 Redis   🐳 Docker
+🎯 Docker Compose   🟢 Nginx   🌿 Celery   🌸 Flower
+💡 Sugestões para Adicionar:
+Testes & Qualidade
+Pytest ✅ - Framework de testes
+
+Coverage 📊 - Cobertura de código
+
+Flake8 🔍 - Análise estática
+
+Monitoramento
+Prometheus 📈 - Métricas
+
+Grafana 📊 - Dashboards
+
+Sentry 🚨 - Error tracking
+
+Desenvolvimento
+Pre-commit 🔒 - Hooks Git
+
+Black ⚫ - Formatação código
+
+ESLint 📝 - Linter JavaScript
+
+
 
 Uma plataforma completa para gerenciamento e descoberta de séries de TV, desenvolvida com Django e containerizada com Docker.
 

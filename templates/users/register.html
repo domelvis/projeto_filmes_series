@@ -1,922 +1,228 @@
-{% extends 'base.html' %} {% block title %}Criar Conta - Plataforma Séries TV{%
-endblock %} {% block meta %}
-<meta
-  name="description"
-  content="Junte-se à Plataforma Séries TV. Crie sua conta gratuita e comece a explorar, avaliar e compartilhar suas séries favoritas."
-/>
-<meta name="robots" content="noindex, nofollow" />
-{% endblock %} {% block body_class %}register-page{% endblock %} {% block
-page_id %}user-register{% endblock %} {% block content %}
-<!-- Container Principal de Registro -->
-<main class="register-container" role="main">
-  <div class="register-background">
-    <div class="background-pattern"></div>
-  </div>
+{% extends 'base.html' %}
 
-  <div class="register-content">
-    <!-- Header do Registro -->
-    <header class="register-header">
-      <nav class="register-breadcrumb" aria-label="Navegação de localização">
-        <a href="{% url 'series:home' %}" class="breadcrumb-link">
-          <span class="breadcrumb-icon">🏠</span>
-          Página Inicial
-        </a>
-        <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-current">Criar Conta</span>
-      </nav>
+{% block title %}Criar Conta - Series & Filmes{% endblock %}
 
-      <div class="register-brand">
-        <a href="{% url 'series:home' %}" class="brand-link">
-          <span class="brand-icon">🎬</span>
-          <span class="brand-text">Séries TV</span>
-        </a>
-      </div>
-      <script src="https://cdn.tailwindcss.com"></script>
-
-      <!-- Seus outros links CSS -->
-      {% load static %}
-      <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    </header>
-
-    <!-- Card de Registro -->
-    <div class="register-card" role="region" aria-labelledby="register-title">
-      <div class="card-header">
-        <h1 id="register-title" class="card-title">
-          <span class="title-icon">✨</span>
-          Junte-se à Nossa Comunidade
-        </h1>
-        <p class="card-subtitle">
-          Crie sua conta e comece sua jornada no mundo das séries
-        </p>
-      </div>
-
-      <!-- Formulário de Registro -->
-      <form method="post" class="register-form" novalidate>
-        {% csrf_token %}
-
-        <!-- Mensagens de Erro Gerais -->
-        {% if form.non_field_errors %}
-        <div class="alert alert--error" role="alert" aria-live="polite">
-          <div class="alert-icon">⚠️</div>
-          <div class="alert-content">
-            <h4 class="alert-title">Erro no Formulário</h4>
-            {% for error in form.non_field_errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
-          </div>
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <h2 class="text-3xl font-bold text-gray-900">
+                Crie sua conta
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Ou
+                <a href="{% url 'users:login' %}" class="font-medium text-primary hover:text-primary-dark">
+                    faça login se já tiver uma conta
+                </a>
+            </p>
         </div>
-        {% endif %}
 
-        <!-- Seção: Informações Pessoais -->
-        <section class="form-section" aria-labelledby="personal-info-title">
-          <h2 id="personal-info-title" class="section-title">
-            <span class="section-icon">👤</span>
-            Informações Pessoais
-          </h2>
-
-          <div class="form-grid">
-            <!-- Nome de Usuário -->
-            <div class="form-field">
-              <label
-                for="{{ form.username.id_for_label }}"
-                class="field-label required"
-              >
-                <span class="label-icon">🔑</span>
-                Nome de Usuário
-              </label>
-              <div class="field-wrapper">
-                <input
-                  type="text"
-                  id="{{ form.username.id_for_label }}"
-                  name="{{ form.username.name }}"
-                  class="field-input"
-                  placeholder="Escolha um nome de usuário único..."
-                  value="{{ form.username.value|default:'' }}"
-                  required
-                  autocomplete="username"
-                  aria-describedby="username-help username-error"
-                />
-                <span class="field-icon">👤</span>
-              </div>
-              <small id="username-help" class="field-help">
-                Único, 3-150 caracteres. Letras, números e @/./+/-/_ apenas.
-              </small>
-              {% if form.username.errors %}
-              <div
-                id="username-error"
-                class="field-error"
-                role="alert"
-                aria-live="polite"
-              >
-                {% for error in form.username.errors %}
-                <span class="error-icon">❌</span>{{ error }} {% endfor %}
-              </div>
-              {% endif %}
-            </div>
-
-            <!-- Nome Completo -->
-            <div class="form-field form-field--full">
-              <div class="name-fields">
-                <div class="name-field">
-                  <label
-                    for="{{ form.first_name.id_for_label }}"
-                    class="field-label"
-                  >
-                    <span class="label-icon">📝</span>
-                    Primeiro Nome
-                  </label>
-                  <input
-                    type="text"
-                    id="{{ form.first_name.id_for_label }}"
-                    name="{{ form.first_name.name }}"
-                    class="field-input"
-                    placeholder="Seu primeiro nome"
-                    value="{{ form.first_name.value|default:'' }}"
-                    autocomplete="given-name"
-                    aria-describedby="firstname-help"
-                  />
+        <!-- Formulário de Registro -->
+        <form class="mt-8 space-y-6" method="post" action="{% url 'users:register' %}">
+            {% csrf_token %}
+            
+            <div class="rounded-md shadow-sm -space-y-px">
+                <!-- Nome -->
+                <div>
+                    <label for="name" class="sr-only">Nome completo</label>
+                    <input id="name" 
+                           name="name" 
+                           type="text" 
+                           required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                           placeholder="Nome completo">
                 </div>
-                <div class="name-field">
-                  <label
-                    for="{{ form.last_name.id_for_label }}"
-                    class="field-label"
-                  >
-                    <span class="label-icon">📝</span>
-                    Sobrenome
-                  </label>
-                  <input
-                    type="text"
-                    id="{{ form.last_name.id_for_label }}"
-                    name="{{ form.last_name.name }}"
-                    class="field-input"
-                    placeholder="Seu sobrenome"
-                    value="{{ form.last_name.value|default:'' }}"
-                    autocomplete="family-name"
-                    aria-describedby="lastname-help"
-                  />
+                
+                <!-- Email -->
+                <div>
+                    <label for="email" class="sr-only">E-mail</label>
+                    <input id="email" 
+                           name="email" 
+                           type="email" 
+                           required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                           placeholder="E-mail">
                 </div>
-              </div>
-              <small id="name-help" class="field-help">
-                Opcional, mas recomendado para personalização.
-              </small>
+
+                <!-- Username -->
+                <div>
+                    <label for="username" class="sr-only">Nome de usuário</label>
+                    <input id="username" 
+                           name="username" 
+                           type="text" 
+                           required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                           placeholder="Nome de usuário">
+                </div>
+                
+                <!-- Senha -->
+                <div>
+                    <label for="password1" class="sr-only">Senha</label>
+                    <input id="password1" 
+                           name="password1" 
+                           type="password" 
+                           required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                           placeholder="Senha">
+                </div>
+
+                <!-- Confirmar Senha -->
+                <div>
+                    <label for="password2" class="sr-only">Confirmar senha</label>
+                    <input id="password2" 
+                           name="password2" 
+                           type="password" 
+                           required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                           placeholder="Confirmar senha">
+                </div>
             </div>
 
-            <!-- Email -->
-            <div class="form-field">
-              <label
-                for="{{ form.email.id_for_label }}"
-                class="field-label required"
-              >
-                <span class="label-icon">📧</span>
-                Email
-              </label>
-              <div class="field-wrapper">
-                <input
-                  type="email"
-                  id="{{ form.email.id_for_label }}"
-                  name="{{ form.email.name }}"
-                  class="field-input"
-                  placeholder="seu@email.com"
-                  value="{{ form.email.value|default:'' }}"
-                  required
-                  autocomplete="email"
-                  aria-describedby="email-help email-error"
-                />
-                <span class="field-icon">✉️</span>
-              </div>
-              <small id="email-help" class="field-help">
-                Usaremos para confirmação e notificações importantes.
-              </small>
-              {% if form.email.errors %}
-              <div
-                id="email-error"
-                class="field-error"
-                role="alert"
-                aria-live="polite"
-              >
-                {% for error in form.email.errors %}
-                <span class="error-icon">❌</span>{{ error }} {% endfor %}
-              </div>
-              {% endif %}
+            <!-- Termos e Condições -->
+            <div class="flex items-center">
+                <input id="terms" 
+                       name="terms" 
+                       type="checkbox"
+                       required
+                       class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                <label for="terms" class="ml-2 block text-sm text-gray-900">
+                    Eu concordo com os
+                    <a href="#" class="font-medium text-primary hover:text-primary-dark">
+                        Termos de Uso
+                    </a>
+                    e
+                    <a href="#" class="font-medium text-primary hover:text-primary-dark">
+                        Política de Privacidade
+                    </a>
+                </label>
             </div>
-          </div>
-        </section>
 
-        <!-- Seção: Segurança -->
-        <section class="form-section" aria-labelledby="security-title">
-          <h2 id="security-title" class="section-title">
-            <span class="section-icon">🔒</span>
-            Segurança da Conta
-          </h2>
-
-          <div class="form-grid">
-            <!-- Senha -->
-            <div class="form-field">
-              <label
-                for="{{ form.password1.id_for_label }}"
-                class="field-label required"
-              >
-                <span class="label-icon">🔑</span>
-                Senha
-              </label>
-              <div class="field-wrapper">
-                <input
-                  type="password"
-                  id="{{ form.password1.id_for_label }}"
-                  name="{{ form.password1.name }}"
-                  class="field-input field-input--password"
-                  placeholder="Crie uma senha segura..."
-                  required
-                  autocomplete="new-password"
-                  aria-describedby="password1-help password1-error"
-                />
-                <span class="field-icon">🔒</span>
-                <button
-                  type="button"
-                  class="password-toggle"
-                  data-target="{{ form.password1.id_for_label }}"
-                  aria-label="Mostrar/ocultar senha"
-                >
-                  <span class="toggle-icon">👁️</span>
+            <!-- Botão de Registro -->
+            <div>
+                <button type="submit" 
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="fas fa-user-plus text-primary-dark group-hover:text-primary"></i>
+                    </span>
+                    Criar conta
                 </button>
-              </div>
-              <small id="password1-help" class="field-help">
-                Mínimo 8 caracteres. Use letras, números e símbolos.
-              </small>
-              {% if form.password1.errors %}
-              <div
-                id="password1-error"
-                class="field-error"
-                role="alert"
-                aria-live="polite"
-              >
-                {% for error in form.password1.errors %}
-                <span class="error-icon">❌</span>{{ error }} {% endfor %}
-              </div>
-              {% endif %}
             </div>
+        </form>
 
-            <!-- Confirmação de Senha -->
-            <div class="form-field">
-              <label
-                for="{{ form.password2.id_for_label }}"
-                class="field-label required"
-              >
-                <span class="label-icon">✅</span>
-                Confirmar Senha
-              </label>
-              <div class="field-wrapper">
-                <input
-                  type="password"
-                  id="{{ form.password2.id_for_label }}"
-                  name="{{ form.password2.name }}"
-                  class="field-input field-input--password"
-                  placeholder="Digite a senha novamente..."
-                  required
-                  autocomplete="new-password"
-                  aria-describedby="password2-help password2-error"
-                />
-                <span class="field-icon">🔒</span>
-                <button
-                  type="button"
-                  class="password-toggle"
-                  data-target="{{ form.password2.id_for_label }}"
-                  aria-label="Mostrar/ocultar senha"
-                >
-                  <span class="toggle-icon">👁️</span>
-                </button>
-              </div>
-              <small id="password2-help" class="field-help">
-                Digite a mesma senha para confirmação.
-              </small>
-              {% if form.password2.errors %}
-              <div
-                id="password2-error"
-                class="field-error"
-                role="alert"
-                aria-live="polite"
-              >
-                {% for error in form.password2.errors %}
-                <span class="error-icon">❌</span>{{ error }} {% endfor %}
-              </div>
-              {% endif %}
+        <!-- Divisor -->
+        <div class="mt-6">
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-gray-50 text-gray-500">
+                        Ou registre-se com
+                    </span>
+                </div>
             </div>
-          </div>
-
-          <!-- Indicador de Força da Senha -->
-          <div class="password-strength" id="passwordStrength">
-            <div class="strength-header">
-              <span class="strength-label">Força da senha:</span>
-              <span class="strength-value" id="strengthValue">Fraca</span>
-            </div>
-            <div class="strength-bar">
-              <div class="strength-fill" id="strengthFill"></div>
-            </div>
-            <div class="strength-requirements" id="strengthRequirements">
-              <div class="requirement" data-requirement="length">
-                <span class="requirement-icon">⏳</span>
-                <span class="requirement-text">Mínimo 8 caracteres</span>
-              </div>
-              <div class="requirement" data-requirement="lowercase">
-                <span class="requirement-icon">🔡</span>
-                <span class="requirement-text">Letra minúscula</span>
-              </div>
-              <div class="requirement" data-requirement="uppercase">
-                <span class="requirement-icon">🔠</span>
-                <span class="requirement-text">Letra maiúscula</span>
-              </div>
-              <div class="requirement" data-requirement="number">
-                <span class="requirement-icon">🔢</span>
-                <span class="requirement-text">Pelo menos 1 número</span>
-              </div>
-              <div class="requirement" data-requirement="special">
-                <span class="requirement-icon">⚡</span>
-                <span class="requirement-text">Caractere especial</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Seção: Termos e Preferências -->
-        <section class="form-section" aria-labelledby="terms-title">
-          <h2 id="terms-title" class="section-title">
-            <span class="section-icon">📋</span>
-            Termos e Preferências
-          </h2>
-
-          <!-- Aceitação dos Termos -->
-          <div class="form-field form-field--full">
-            <label class="option-checkbox required">
-              <input
-                type="checkbox"
-                id="agree_terms"
-                name="agree_terms"
-                class="checkbox-input"
-                required
-                aria-describedby="terms-help terms-error"
-              />
-              <span class="checkmark"></span>
-              <span class="option-label">
-                Eu concordo com os
-                <a href="/termos" target="_blank" class="terms-link"
-                  >Termos de Uso</a
-                >
-                e
-                <a href="/privacidade" target="_blank" class="terms-link"
-                  >Política de Privacidade</a
-                >
-              </span>
-            </label>
-            <small id="terms-help" class="field-help">
-              Você deve aceitar os termos para criar uma conta.
-            </small>
-            <div
-              id="terms-error"
-              class="field-error"
-              role="alert"
-              aria-live="polite"
-              style="display: none"
-            ></div>
-          </div>
-
-          <!-- Newsletter Opt-in -->
-          <div class="form-field form-field--full">
-            <label class="option-checkbox">
-              <input
-                type="checkbox"
-                id="newsletter_optin"
-                name="newsletter_optin"
-                class="checkbox-input"
-                checked
-                aria-describedby="newsletter-help"
-              />
-              <span class="checkmark"></span>
-              <span class="option-label">
-                <span class="option-icon">📰</span>
-                Receber newsletter com novidades e recomendações
-              </span>
-            </label>
-            <small id="newsletter-help" class="field-help">
-              Você pode cancelar a qualquer momento.
-            </small>
-          </div>
-        </section>
-
-        <!-- Botão de Submit -->
-        <div class="form-actions">
-          <button
-            type="submit"
-            class="btn btn--primary btn--register"
-            id="registerButton"
-          >
-            <span class="btn-icon">🚀</span>
-            <span class="btn-text">Criar Minha Conta</span>
-            <span class="btn-loading" aria-hidden="true">⏳</span>
-          </button>
         </div>
-      </form>
 
-      <!-- Divisor -->
-      <div class="register-divider">
-        <span class="divider-text">Já tem uma conta?</span>
-      </div>
-
-      <!-- Link para Login -->
-      <div class="register-footer">
-        <a href="{% url 'users:login' %}" class="btn btn--outline btn--login">
-          <span class="btn-icon">🔑</span>
-          Fazer Login na Minha Conta
-        </a>
-      </div>
+        <!-- Registro Social -->
+        <div class="mt-6 grid grid-cols-3 gap-3">
+            <div>
+                <a href="#" 
+                   class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <i class="fab fa-google"></i>
+                </a>
+            </div>
+            <div>
+                <a href="#" 
+                   class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <i class="fab fa-facebook"></i>
+                </a>
+            </div>
+            <div>
+                <a href="#" 
+                   class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+        </div>
     </div>
+</div>
+{% endblock %}
 
-    <!-- Benefícios da Plataforma -->
-    <aside class="benefits-sidebar" aria-labelledby="benefits-title">
-      <h3 id="benefits-title" class="benefits-title">
-        <span class="benefits-icon">🎁</span>
-        Benefícios da Sua Conta
-      </h3>
-
-      <div class="benefits-list">
-        <div class="benefit-item">
-          <span class="benefit-icon">📺</span>
-          <div class="benefit-content">
-            <h4>Catálogo Completo</h4>
-            <p>Acesso a milhares de séries com informações detalhadas</p>
-          </div>
-        </div>
-
-        <div class="benefit-item">
-          <span class="benefit-icon">❤️</span>
-          <div class="benefit-content">
-            <h4>Lista de Favoritos</h4>
-            <p>Salve suas séries preferidas para assistir depois</p>
-          </div>
-        </div>
-
-        <div class="benefit-item">
-          <span class="benefit-icon">💬</span>
-          <div class="benefit-content">
-            <h4>Comunidade Ativa</h4>
-            <p>Participe de discussões e avalie séries</p>
-          </div>
-        </div>
-
-        <div class="benefit-item">
-          <span class="benefit-icon">🎯</span>
-          <div class="benefit-content">
-            <h4>Recomendações Personalizadas</h4>
-            <p>Descubra novas séries baseadas no seu gosto</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="security-notice">
-        <div class="notice-icon">🛡️</div>
-        <div class="notice-content">
-          <h4>Segurança Garantida</h4>
-          <p>Seus dados estão protegidos com criptografia avançada</p>
-        </div>
-      </div>
-    </aside>
-  </div>
-</main>
-
-<!-- Modal de Sucesso -->
-<dialog id="successModal" class="success-modal" aria-labelledby="success-title">
-  <div class="modal-content">
-    <div class="success-header">
-      <span class="success-icon">🎉</span>
-      <h3 id="success-title" class="success-title">
-        Conta Criada com Sucesso!
-      </h3>
-    </div>
-
-    <div class="success-body">
-      <p>
-        Bem-vindo(a) à Plataforma Séries TV,
-        <strong id="welcomeUsername"></strong>!
-      </p>
-      <div class="success-features">
-        <div class="feature-highlight">
-          <span class="highlight-icon">📧</span>
-          <span class="highlight-text">Enviamos um email de confirmação</span>
-        </div>
-        <div class="feature-highlight">
-          <span class="highlight-icon">⚡</span>
-          <span class="highlight-text">Sua conta está pronta para uso</span>
-        </div>
-        <div class="feature-highlight">
-          <span class="highlight-icon">🔍</span>
-          <span class="highlight-text">Comece explorando nosso catálogo</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="success-actions">
-      <button
-        type="button"
-        class="btn btn--primary"
-        onclick="redirectToDashboard()"
-      >
-        <span class="btn-icon">🚀</span>
-        Explorar Plataforma
-      </button>
-      <button
-        type="button"
-        class="btn btn--outline"
-        onclick="redirectToProfile()"
-      >
-        <span class="btn-icon">👤</span>
-        Completar Perfil
-      </button>
-    </div>
-  </div>
-</dialog>
-{% endblock %} {% block extra_scripts %}
+{% block extra_js %}
 <script>
-  // Configuração do formulário de registro
-  const REGISTER_CONFIG = {
-    isSubmitting: false,
-    passwordStrength: {
-      minLength: 8,
-      requirements: ["length", "lowercase", "uppercase", "number", "special"],
-    },
-  };
-
-  // Inicialização
-  document.addEventListener("DOMContentLoaded", function () {
-    initializeRegisterForm();
-    setupPasswordStrength();
-    setupFormValidation();
-    setupPasswordToggle();
-  });
-
-  // Inicialização do formulário
-  function initializeRegisterForm() {
-    // Adicionar classes e placeholders aos campos do Django
-    styleDjangoFields();
-
-    // Configurar validação em tempo real
-    setupRealTimeValidation();
-
-    // Configurar evento de submit
-    const registerForm = document.querySelector(".register-form");
-    if (registerForm) {
-      registerForm.addEventListener("submit", handleFormSubmit);
-    }
-  }
-
-  // Força da senha
-  function setupPasswordStrength() {
-    const passwordField = document.getElementById(
-      "{{ form.password1.id_for_label }}"
-    );
-    if (!passwordField) return;
-
-    passwordField.addEventListener("input", function () {
-      checkPasswordStrength(this.value);
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    const password1 = document.getElementById('password1');
+    const password2 = document.getElementById('password2');
+    
+    // Validação de força da senha
+    password1.addEventListener('input', () => {
+        const value = password1.value;
+        const hasUpperCase = /[A-Z]/.test(value);
+        const hasLowerCase = /[a-z]/.test(value);
+        const hasNumbers = /\d/.test(value);
+        const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+        const isLongEnough = value.length >= 8;
+        
+        if (!isLongEnough || !hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChars) {
+            password1.setCustomValidity('A senha deve ter pelo menos 8 caracteres, incluindo maiúsculas, minúsculas, números e caracteres especiais.');
+        } else {
+            password1.setCustomValidity('');
+        }
     });
-  }
-
-  function checkPasswordStrength(password) {
-    const strengthValue = document.getElementById("strengthValue");
-    const strengthFill = document.getElementById("strengthFill");
-    const requirements = REGISTER_CONFIG.passwordStrength.requirements;
-
-    let score = 0;
-    const checks = {
-      length: password.length >= REGISTER_CONFIG.passwordStrength.minLength,
-      lowercase: /[a-z]/.test(password),
-      uppercase: /[A-Z]/.test(password),
-      number: /[0-9]/.test(password),
-      special: /[^A-Za-z0-9]/.test(password),
-    };
-
-    // Calcular score
-    requirements.forEach((req) => {
-      if (checks[req]) score++;
-    });
-
-    // Atualizar UI
-    const percentage = (score / requirements.length) * 100;
-    strengthFill.style.width = percentage + "%";
-
-    // Atualizar texto e cor
-    let strengthText, strengthClass;
-    if (score === 0) {
-      strengthText = "Muito Fraca";
-      strengthClass = "very-weak";
-    } else if (score <= 2) {
-      strengthText = "Fraca";
-      strengthClass = "weak";
-    } else if (score <= 3) {
-      strengthText = "Média";
-      strengthClass = "medium";
-    } else if (score <= 4) {
-      strengthText = "Forte";
-      strengthClass = "strong";
-    } else {
-      strengthText = "Muito Forte";
-      strengthClass = "very-strong";
-    }
-
-    strengthValue.textContent = strengthText;
-    strengthFill.className = "strength-fill " + strengthClass;
-
-    // Atualizar requisitos
-    updateRequirementsUI(checks);
-  }
-
-  function updateRequirementsUI(checks) {
-    const requirements = document.querySelectorAll(".requirement");
-    requirements.forEach((req) => {
-      const requirementType = req.dataset.requirement;
-      const icon = req.querySelector(".requirement-icon");
-
-      if (checks[requirementType]) {
-        req.classList.add("met");
-        icon.textContent = "✅";
-      } else {
-        req.classList.remove("met");
-        icon.textContent = getRequirementIcon(requirementType);
-      }
-    });
-  }
-
-  function getRequirementIcon(requirement) {
-    const icons = {
-      length: "⏳",
-      lowercase: "🔡",
-      uppercase: "🔠",
-      number: "🔢",
-      special: "⚡",
-    };
-    return icons[requirement] || "⚡";
-  }
-
-  // Validação do formulário
-  function setupFormValidation() {
-    // Validação em tempo real do username
-    const usernameField = document.getElementById(
-      "{{ form.username.id_for_label }}"
-    );
-    if (usernameField) {
-      usernameField.addEventListener("blur", function () {
-        validateUsername(this.value);
-      });
-    }
-
-    // Validação de email
-    const emailField = document.getElementById("{{ form.email.id_for_label }}");
-    if (emailField) {
-      emailField.addEventListener("blur", function () {
-        validateEmail(this.value);
-      });
-    }
 
     // Validação de confirmação de senha
-    const password2Field = document.getElementById(
-      "{{ form.password2.id_for_label }}"
-    );
-    if (password2Field) {
-      password2Field.addEventListener("input", function () {
-        validatePasswordConfirmation();
-      });
-    }
-  }
-
-  function validateUsername(value) {
-    const errorElement = document.getElementById("username-error");
-    const field = document.getElementById("{{ form.username.id_for_label }}");
-
-    if (value.length < 3) {
-      showFieldError(field, errorElement, "Mínimo 3 caracteres");
-      return false;
-    }
-
-    if (value.length > 150) {
-      showFieldError(field, errorElement, "Máximo 150 caracteres");
-      return false;
-    }
-
-    if (!/^[\w.@+-]+$/.test(value)) {
-      showFieldError(field, errorElement, "Caracteres inválidos");
-      return false;
-    }
-
-    clearFieldError(field, errorElement);
-    return true;
-  }
-
-  function validateEmail(value) {
-    const errorElement = document.getElementById("email-error");
-    const field = document.getElementById("{{ form.email.id_for_label }}");
-
-    if (!value) {
-      showFieldError(field, errorElement, "Email é obrigatório");
-      return false;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      showFieldError(field, errorElement, "Email inválido");
-      return false;
-    }
-
-    clearFieldError(field, errorElement);
-    return true;
-  }
-
-  function validatePasswordConfirmation() {
-    const password1 = document.getElementById(
-      "{{ form.password1.id_for_label }}"
-    ).value;
-    const password2 = document.getElementById(
-      "{{ form.password2.id_for_label }}"
-    ).value;
-    const errorElement = document.getElementById("password2-error");
-    const field = document.getElementById("{{ form.password2.id_for_label }}");
-
-    if (password1 && password2 && password1 !== password2) {
-      showFieldError(field, errorElement, "As senhas não coincidem");
-      return false;
-    }
-
-    clearFieldError(field, errorElement);
-    return true;
-  }
-
-  // Toggle de senha
-  function setupPasswordToggle() {
-    const toggleButtons = document.querySelectorAll(".password-toggle");
-
-    toggleButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const targetId = this.dataset.target;
-        const passwordField = document.getElementById(targetId);
-        const toggleIcon = this.querySelector(".toggle-icon");
-
-        if (passwordField && toggleIcon) {
-          if (passwordField.type === "password") {
-            passwordField.type = "text";
-            toggleIcon.textContent = "🙈";
-          } else {
-            passwordField.type = "password";
-            toggleIcon.textContent = "👁️";
-          }
+    password2.addEventListener('input', () => {
+        if (password2.value !== password1.value) {
+            password2.setCustomValidity('As senhas não conferem');
+        } else {
+            password2.setCustomValidity('');
         }
-      });
     });
-  }
-
-  // Manipulação do submit
-  function handleFormSubmit(event) {
-    event.preventDefault();
-
-    if (REGISTER_CONFIG.isSubmitting) {
-      return;
-    }
-
-    // Validar todos os campos
-    const isFormValid = validateAllFields();
-
-    if (!isFormValid) {
-      showToast("Por favor, corrija os erros antes de continuar", "error");
-      return;
-    }
-
-    // Mostrar estado de carregamento
-    setRegisterState("loading");
-    REGISTER_CONFIG.isSubmitting = true;
-
-    // Simular envio (substituir pelo envio real)
-    simulateRegistration();
-  }
-
-  function validateAllFields() {
-    const usernameValid = validateUsername(
-      document.getElementById("{{ form.username.id_for_label }}").value
-    );
-    const emailValid = validateEmail(
-      document.getElementById("{{ form.email.id_for_label }}").value
-    );
-    const passwordValid = validatePasswordConfirmation();
-    const termsAccepted = document.getElementById("agree_terms").checked;
-
-    if (!termsAccepted) {
-      const termsError = document.getElementById("terms-error");
-      termsError.style.display = "block";
-      termsError.innerHTML =
-        '<span class="error-icon">❌</span>Você deve aceitar os termos de uso';
-      return false;
-    } else {
-      document.getElementById("terms-error").style.display = "none";
-    }
-
-    return usernameValid && emailValid && passwordValid;
-  }
-
-  function setRegisterState(state) {
-    const registerButton = document.getElementById("registerButton");
-    const buttonText = registerButton.querySelector(".btn-text");
-    const buttonIcon = registerButton.querySelector(".btn-icon");
-    const buttonLoading = registerButton.querySelector(".btn-loading");
-
-    switch (state) {
-      case "loading":
-        registerButton.disabled = true;
-        buttonText.textContent = "Criando Conta...";
-        buttonIcon.style.display = "none";
-        buttonLoading.style.display = "inline";
-        break;
-
-      case "success":
-        registerButton.disabled = false;
-        buttonText.textContent = "Conta Criada!";
-        buttonIcon.textContent = "✅";
-        buttonIcon.style.display = "inline";
-        buttonLoading.style.display = "none";
-        break;
-
-      case "error":
-        registerButton.disabled = false;
-        buttonText.textContent = "Tentar Novamente";
-        buttonIcon.textContent = "🚀";
-        buttonIcon.style.display = "inline";
-        buttonLoading.style.display = "none";
-        break;
-    }
-  }
-
-  function simulateRegistration() {
-    // Simular delay de rede
-    setTimeout(() => {
-      setRegisterState("success");
-      showSuccessModal();
-
-      // Redirecionar após sucesso
-      setTimeout(() => {
-        window.location.href = "{% url 'series:home' %}";
-      }, 3000);
-    }, 2000);
-  }
-
-  function showSuccessModal() {
-    const username = document.getElementById(
-      "{{ form.username.id_for_label }}"
-    ).value;
-    document.getElementById("welcomeUsername").textContent = username;
-
-    const successModal = document.getElementById("successModal");
-    if (successModal && typeof successModal.showModal === "function") {
-      successModal.showModal();
-    }
-  }
-
-  // Funções de utilidade
-  function showFieldError(field, errorElement, message) {
-    if (field && errorElement) {
-      field.classList.add("error");
-      errorElement.innerHTML = `<span class="error-icon">❌</span>${message}`;
-      errorElement.style.display = "block";
-    }
-  }
-
-  function clearFieldError(field, errorElement) {
-    if (field && errorElement) {
-      field.classList.remove("error");
-      errorElement.style.display = "none";
-    }
-  }
-
-  function showToast(message, type = "info") {
-    // Implementar sistema de toast
-    console.log(`${type}: ${message}`);
-  }
-
-  function styleDjangoFields() {
-    // Aplicar estilos consistentes aos campos do Django
-    const fields = [
-      "{{ form.username.id_for_label }}",
-      "{{ form.first_name.id_for_label }}",
-      "{{ form.last_name.id_for_label }}",
-      "{{ form.email.id_for_label }}",
-      "{{ form.password1.id_for_label }}",
-      "{{ form.password2.id_for_label }}",
-    ];
-
-    fields.forEach((fieldId) => {
-      const field = document.getElementById(fieldId);
-      if (field) {
-        field.classList.add("field-input");
-      }
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Criando conta...';
+        
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showNotification('Conta criada com sucesso!', 'success');
+                window.location.href = data.redirect || '/users/login/';
+            } else {
+                const errors = data.errors || {};
+                Object.keys(errors).forEach(field => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (input) {
+                        input.setCustomValidity(errors[field].join(' '));
+                        input.reportValidity();
+                    }
+                });
+                showNotification(data.message || 'Erro ao criar conta. Verifique os dados informados.', 'error');
+            }
+        } catch (error) {
+            console.error('Erro ao criar conta:', error);
+            showNotification('Erro ao criar conta. Tente novamente.', 'error');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        }
     });
-  }
-
-  // Exportar funções globais
-  window.RegisterManager = {
-    checkPasswordStrength,
-    validateAllFields,
-  };
+});
 </script>
 {% endblock %}

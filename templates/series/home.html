@@ -1,38 +1,196 @@
-﻿<!DOCTYPE html>
-<html lang=\"pt-br\">
-<head>
-    <meta charset=\"UTF-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-    <title>Séries TV - Sistema Docker</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }       
-        h1 { color: #333; text-align: center; }
-        .status { background: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .btn { display: inline-block; padding: 10px 20px; margin: 5px; text-decoration: none; border-radius: 4px; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-outline { background: transparent; border: 1px solid #007bff; color: #007bff; }
-    </style>
-</head>
-<body>
-    <div class=\"container\">
-        <h1>🎬 Séries TV</h1>
-        <p style=\"text-align: center; font-size: 18px;\">Sistema funcionando perfeitamente com Docker!</p>
-        
-        <div class=\"status\">
-            <h3>✅ Status do Sistema</h3>
-            <ul>
-                <li>Django: ✅ Rodando</li>
-                <li>PostgreSQL: ✅ Conectado</li>
-                <li>Redis: ✅ Ativo</li>
-                <li>Nginx: ✅ Proxy configurado</li>
-            </ul>
-        </div>
-        
-        <div style=\"text-align: center; margin-top: 30px;\">
-            <a href=\"/admin\" class=\"btn btn-primary\">Django Admin</a>
-            <a href=\"/series\" class=\"btn btn-outline\">Catálogo de Séries</a>
+{% extends 'base.html' %}
+
+{% block title %}Home - Series & Filmes{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url("{% static 'images/hero-bg.jpg' %}");
+        background-size: cover;
+        background-position: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero -mt-8 mb-12 py-24 text-white">
+    <div class="container-custom text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+            Descubra e Acompanhe Séries
+        </h1>
+        <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+            Mantenha o controle das suas séries favoritas, descubra novos títulos e compartilhe suas opiniões.
+        </p>
+        <div class="flex justify-center space-x-4">
+            {% if user.is_authenticated %}
+                <a href="{% url 'series:list' %}" class="btn-primary">
+                    <i class="fas fa-tv mr-2"></i>Explorar Séries
+                </a>
+            {% else %}
+                <a href="{% url 'users:register' %}" class="btn-primary">
+                    <i class="fas fa-user-plus mr-2"></i>Começar Agora
+                </a>
+            {% endif %}
+            <a href="#como-funciona" class="btn-secondary">
+                <i class="fas fa-info-circle mr-2"></i>Saiba Mais
+            </a>
         </div>
     </div>
-</body>
-</html>
+</section>
+
+<!-- Seção de Busca -->
+<section class="mb-12">
+    <div class="container-custom">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="max-w-2xl mx-auto">
+                <div class="relative">
+                    <input type="text" 
+                           id="search-input"
+                           placeholder="Buscar séries..." 
+                           class="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <div id="search-results" class="mt-4 space-y-2"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Séries em Destaque -->
+<section class="mb-12">
+    <div class="container-custom">
+        <h2 class="text-2xl font-bold mb-6 text-gray-900">Séries em Destaque</h2>
+        <div class="series-grid">
+            {% for series in featured_series %}
+            <div class="series-card">
+                <img src="{{ series.poster_url }}" 
+                     alt="{{ series.title }}"
+                     class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">{{ series.title }}</h3>
+                    <p class="text-sm text-gray-600 mb-4">{{ series.description|truncatewords:20 }}</p>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-400 mr-1"></i>
+                            <span>{{ series.rating|default:"N/A" }}</span>
+                        </div>
+                        <a href="{% url 'series:detail' series.id %}" class="btn-primary">
+                            Ver Mais
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Como Funciona -->
+<section id="como-funciona" class="py-12 bg-gray-50">
+    <div class="container-custom">
+        <h2 class="text-2xl font-bold mb-12 text-center text-gray-900">Como Funciona</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-search text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Descubra</h3>
+                <p class="text-gray-600">
+                    Encontre novas séries baseadas nos seus interesses e preferências.
+                </p>
+            </div>
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-heart text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Acompanhe</h3>
+                <p class="text-gray-600">
+                    Mantenha o registro das séries que você está assistindo e seus episódios favoritos.
+                </p>
+            </div>
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-comments text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Compartilhe</h3>
+                <p class="text-gray-600">
+                    Avalie séries e compartilhe suas opiniões com outros usuários.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Estatísticas -->
+<section class="py-12 bg-primary text-white">
+    <div class="container-custom">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+            <div>
+                <div class="text-4xl font-bold mb-2">{{ total_series }}</div>
+                <div class="text-lg">Séries Cadastradas</div>
+            </div>
+            <div>
+                <div class="text-4xl font-bold mb-2">{{ total_users }}</div>
+                <div class="text-lg">Usuários Ativos</div>
+            </div>
+            <div>
+                <div class="text-4xl font-bold mb-2">{{ total_reviews }}</div>
+                <div class="text-lg">Avaliações</div>
+            </div>
+            <div>
+                <div class="text-4xl font-bold mb-2">{{ total_episodes }}</div>
+                <div class="text-lg">Episódios</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const searchInput = document.querySelector('#search-input');
+const searchResults = document.querySelector('#search-results');
+let debounceTimer;
+
+searchInput.addEventListener('input', e => {
+    clearTimeout(debounceTimer);
+    
+    debounceTimer = setTimeout(async () => {
+        const query = e.target.value;
+        
+        if (query.length >= 2) {
+            try {
+                const response = await fetch(`/api/series/search/?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                searchResults.innerHTML = data.results.map(series => `
+                    <a href="/series/${series.id}/" class="block p-4 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="flex items-center">
+                            <img src="${series.poster_url}" 
+                                 alt="${series.title}"
+                                 class="w-16 h-16 object-cover rounded">
+                            <div class="ml-4">
+                                <h4 class="font-semibold">${series.title}</h4>
+                                <p class="text-sm text-gray-600">${series.year}</p>
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+            } catch (error) {
+                console.error('Erro na busca:', error);
+            }
+        } else {
+            searchResults.innerHTML = '';
+        }
+    }, 300);
+});
+
+// Limpar resultados quando clicar fora
+document.addEventListener('click', e => {
+    if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.innerHTML = '';
+    }
+});
+</script>
+{% endblock %}

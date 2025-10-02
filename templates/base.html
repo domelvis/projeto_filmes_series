@@ -1,12 +1,182 @@
-﻿<!DOCTYPE html>
-<html lang=\"pt-br\">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-    <meta charset=\"UTF-8\">
-    <title>{% block title %}Sistema Séries{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Series & Filmes{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <link href="{{ static('css/output.css') }}" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="{{ static('css/base.css') }}" rel="stylesheet">
+    
+    <!-- Fonte Inter do Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <div class=\"container\">
+<body class="bg-background min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="container-custom py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="text-2xl font-bold text-primary">
+                        <i class="fas fa-film mr-2"></i>Series & Filmes
+                    </a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="{% url 'series:list' %}" class="nav-link">
+                            <i class="fas fa-tv mr-1"></i>Séries
+                        </a>
+                        <a href="{% url 'series:favorites' %}" class="nav-link">
+                            <i class="fas fa-heart mr-1"></i>Favoritos
+                        </a>
+                        <a href="{% url 'dashboard' %}" class="nav-link">
+                            <i class="fas fa-chart-line mr-1"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="flex items-center space-x-2 text-gray-700 hover:text-primary">
+                                <img src="{{ user.avatar_url|default:'/static/images/default-avatar.png' }}" 
+                                     alt="{{ user.username }}" 
+                                     class="w-8 h-8 rounded-full object-cover">
+                                <span class="hidden md:inline">{{ user.username }}</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            
+                            <div x-show="open" 
+                                 @click.away="open = false"
+                                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                                <a href="{% url 'users:profile' %}" class="block px-4 py-2 hover:bg-gray-100">
+                                    <i class="fas fa-user mr-2"></i>Perfil
+                                </a>
+                                <a href="{% url 'users:settings' %}" class="block px-4 py-2 hover:bg-gray-100">
+                                    <i class="fas fa-cog mr-2"></i>Configurações
+                                </a>
+                                <hr class="my-2">
+                                <form action="{% url 'users:logout' %}" method="post" class="block">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="btn-secondary">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+                        </a>
+                        <a href="{% url 'users:register' %}" class="btn-primary hidden md:inline-flex">
+                            <i class="fas fa-user-plus mr-2"></i>Registrar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Mobile menu button -->
+            <div class="md:hidden mt-4">
+                <button @click="mobileMenu = !mobileMenu" class="text-gray-500 hover:text-primary">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Mobile menu -->
+        <div x-show="mobileMenu" class="md:hidden bg-white border-t">
+            <nav class="container-custom py-4 space-y-4">
+                <a href="{% url 'series:list' %}" class="block nav-link">
+                    <i class="fas fa-tv mr-2"></i>Séries
+                </a>
+                <a href="{% url 'series:favorites' %}" class="block nav-link">
+                    <i class="fas fa-heart mr-2"></i>Favoritos
+                </a>
+                <a href="{% url 'dashboard' %}" class="block nav-link">
+                    <i class="fas fa-chart-line mr-2"></i>Dashboard
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-grow container-custom py-8">
+        {% include 'partials/_messages.html' %}
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t">
+        <div class="container-custom py-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-primary mb-4">Sobre</h3>
+                    <p class="text-gray-600">
+                        Series & Filmes é sua plataforma para gerenciar e descobrir séries e filmes.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-primary mb-4">Links Úteis</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'about' %}" class="nav-link">Sobre Nós</a></li>
+                        <li><a href="{% url 'contact' %}" class="nav-link">Contato</a></li>
+                        <li><a href="{% url 'privacy' %}" class="nav-link">Privacidade</a></li>
+                        <li><a href="{% url 'terms' %}" class="nav-link">Termos de Uso</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-primary mb-4">Redes Sociais</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-600 hover:text-primary text-2xl">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-primary text-2xl">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-primary text-2xl">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-6 border-t text-center text-gray-600">
+                <p>&copy; {% now "Y" %} Series & Filmes. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alpine.js -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ static('js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        // Notificações
+        const messages = document.querySelectorAll('.alert');
+        messages.forEach(msg => {
+            setTimeout(() => {
+                msg.classList.add('opacity-0');
+                setTimeout(() => msg.remove(), 500);
+            }, 5000);
+        });
+
+        // Mobile menu
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('layout', () => ({
+                mobileMenu: false
+            }));
+        });
+    </script>
 </body>
 </html>

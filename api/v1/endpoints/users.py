@@ -1,31 +1,29 @@
-from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action
+"""
+Views da API do módulo users
+"""
+from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import status, views, permissions
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
+from rest_framework.decorators import action
+from rest_framework.viewsets import ModelViewSet
 
-from users.models import UserProfile
-from api.v1.serializers.users import (
-    UserSerializer,
+from .serializers.users import (
     UserProfileSerializer,
+    UserAvatarSerializer,
     UserRegistrationSerializer,
+    UserSerializer,
     UserUpdateSerializer,
     ChangePasswordSerializer
 )
+from ..users.utils import format_profile_data
 
+User = get_user_model()
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(ModelViewSet):
     """
     ViewSet para gerenciar usuários.
-    
-    Permite:
-    - Listar usuários (público)
-    - Visualizar perfil de usuário (público)
-    - Atualizar próprio perfil (autenticado)
     """
-    
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -74,30 +72,50 @@ class UserViewSet(viewsets.ModelViewSet):
             })
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    @action(detail=True, methods=['get'])
-    def series(self, request, pk=None):
-        """Retorna as séries criadas por um usuário"""
-        user = self.get_object()
-        series = user.serie_set.all().order_by('-data_criacao')
-        
-        from api.v1.serializers.series import SerieListSerializer
-        serializer = SerieListSerializer(series, many=True, context={'request': request})
-        
-        return Response({
-            'user': user.username,
-            'series': serializer.data,
-            'total': series.count()
-        })
 
 
-class UserProfileViewSet(viewsets.ModelViewSet):
+class ProfileAPIView(views.APIView):
     """
-    ViewSet para gerenciar perfis de usuários.
+    View da API para gerenciar perfil do usuário
     """
+    permission_classes = [permissions.IsAuthenticated]
     
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
+    def get(self, request):
+        """
+        Retorna dados do perfil do usuário
+        """
+        user_data = format_profile_data(request.user)
+        return Response(user_data)
+    
+    def post(self, request):
+        """
+        Atualiza dados do perfil do usuário
+        """
+        serializer = UserProfileSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            user_data = format_profile_data(request.user)
+            return Response(user_data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AvatarAPIView(views.APIView):
+    """
+    View da API para gerenciar avatar do usuário
+    """
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request):
+        """
+        Atualiza avatar do usuário
+        """
+        serializer = UserAvatarSerializer(request.user.profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'avatar_url': request.user.profile.avatar.url
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def get_permissions(self):

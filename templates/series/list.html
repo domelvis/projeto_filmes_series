@@ -1,836 +1,176 @@
 {% extends 'base.html' %}
 
-{% block title %}Catálogo de Séries - Plataforma Séries TV{% endblock %}
-
-{% block meta %}
-<meta name="description" content="Explore nosso catálogo completo de séries. Filtre por gênero, ano, avaliação e encontre suas próximas séries favoritas.">
-<meta name="keywords" content="séries, catálogo, TV, streaming, episódios">
-{% endblock %}
+{% block title %}Séries - Series & Filmes{% endblock %}
 
 {% block content %}
-<!-- Header Principal com Breadcrumb -->
-<header class="page-header mb-8" aria-labelledby="page-title">
-    <nav class="breadcrumb-nav" aria-label="Navegação estrutural">
-        <ol class="breadcrumb flex items-center space-x-2 text-sm text-gray-600">
-            <li class="breadcrumb-item">
-                <a href="{% url 'series:home' %}" class="breadcrumb-link flex items-center hover:text-blue-600 transition-colors">
-                    <span class="breadcrumb-icon mr-1">🏠</span>
-                    Início
-                </a>
-            </li>
-            <li class="breadcrumb-item active flex items-center" aria-current="page">
-                <span class="mx-2">➞</span>
-                <span class="breadcrumb-icon mr-1">📺</span>
-                <span class="text-gray-900 font-medium">Catálogo de Séries</span>
-            </li>
-        </ol>
-    </nav>
-
-    <div class="header-content">
-        <div class="header-text">
-            <h1 id="page-title" class="page-title">
-                <span class="title-icon">🎬</span>
-                Catálogo de Séries
-            </h1>
-            <p class="page-subtitle">Descubra e explore nossa coleção completa de séries</p>
-            <div class="stats-bar">
-                <span class="stat-item">
-                    <strong>{{ total_series }}</strong> séries disponíveis
-                </span>
-                <span class="stat-item">
-                    <strong>{{ total_generos }}</strong> gêneros
-                </span>
-                <span class="stat-item">
-                    <strong>{{ recent_added }}</strong> adicionadas este mês
-                </span>
+<!-- Filtros e Busca -->
+<div class="mb-8">
+    <div class="bg-white rounded-lg shadow p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Busca -->
+            <div class="md:col-span-2">
+                <label for="search" class="form-label">Buscar</label>
+                <div class="relative">
+                    <input type="text" 
+                           id="search" 
+                           name="search" 
+                           value="{{ request.GET.search }}"
+                           placeholder="Buscar séries..." 
+                           class="form-input pl-10">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
             </div>
-        </div>
-
-        {% if user.is_authenticated %}
-        <div class="header-actions">
-            <a href="{% url 'series:create' %}" class="btn-primary" aria-label="Adicionar nova série">
-                <span class="btn-icon">➕</span>
-                Adicionar Série
-            </a>
-        </div>
-        {% endif %}
-    </div>
-</header>
-
-<!-- Sistema de Filtros e Busca -->
-<section class="filters-section" aria-labelledby="filters-title">
-    <div class="filters-header">
-        <h2 id="filters-title" class="filters-title">Filtrar e Buscar</h2>
-        <button class="filters-toggle" aria-expanded="false" aria-controls="filters-content">
-            <span class="toggle-icon">⚙️</span>
-            Mostrar Filtros
-        </button>
-    </div>
-
-    <div id="filters-content" class="filters-content" hidden>
-        <form method="GET" action="{% url 'series:list' %}" class="filters-form" id="filters-form">
-            <!-- Busca Rápida -->
-            <div class="filter-group">
-                <label for="search-input" class="filter-label">
-                    <span class="label-icon">🔍</span>
-                    Buscar por título
-                </label>
-                <input type="text" 
-                       id="search-input" 
-                       name="search" 
-                       value="{{ search }}"
-                       class="search-input" 
-                       placeholder="Digite o nome da série..."
-                       aria-describedby="search-help">
-                <small id="search-help" class="help-text">Busque por título, descrição ou palavras-chave</small>
-            </div>
-
-            <!-- Filtros em Grid -->
-            <div class="filters-grid">
-                <!-- Gênero -->
-                <div class="filter-group">
-                    <label for="genero-filter" class="filter-label">Gênero</label>
-                    <select id="genero-filter" name="genero" class="filter-select">
-                        <option value="">Todos os gêneros</option>
-                        {% for value, label in generos %}
-                        <option value="{{ value }}" {% if genero_selecionado == value %}selected{% endif %}>
-                            {{ label }}
+            
+            <!-- Gênero -->
+            <div>
+                <label for="genre" class="form-label">Gênero</label>
+                <select id="genre" name="genre" class="form-input">
+                    <option value="">Todos</option>
+                    {% for genre in genres %}
+                        <option value="{{ genre.id }}" {% if request.GET.genre == genre.id|stringformat:"s" %}selected{% endif %}>
+                            {{ genre.name }}
                         </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Ano -->
-                <div class="filter-group">
-                    <label for="ano-filter" class="filter-label">Ano de Lançamento</label>
-                    <select id="ano-filter" name="ano" class="filter-select">
-                        <option value="">Todos os anos</option>
-                        {% for year in anos_disponiveis %}
-                        <option value="{{ year }}" {% if ano_selecionado == year %}selected{% endif %}>
-                            {{ year }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Ordenação -->
-                <div class="filter-group">
-                    <label for="ordenacao-filter" class="filter-label">Ordenar por</label>
-                    <select id="ordenacao-filter" name="ordenacao" class="filter-select">
-                        <option value="recentes" {% if ordenacao == 'recentes' %}selected{% endif %}>Mais Recentes</option>
-                        <option value="antigos" {% if ordenacao == 'antigos' %}selected{% endif %}>Mais Antigos</option>
-                        <option value="titulo_az" {% if ordenacao == 'titulo_az' %}selected{% endif %}>Título A-Z</option>
-                        <option value="titulo_za" {% if ordenacao == 'titulo_za' %}selected{% endif %}>Título Z-A</option>
-                        <option value="avaliacao" {% if ordenacao == 'avaliacao' %}selected{% endif %}>Melhor Avaliados</option>
-                    </select>
-                </div>
-
-                <!-- Status -->
-                <div class="filter-group">
-                    <label for="status-filter" class="filter-label">Status</label>
-                    <select id="status-filter" name="status" class="filter-select">
-                        <option value="">Todos os status</option>
-                        <option value="em_andamento" {% if status_selecionado == 'em_andamento' %}selected{% endif %}>Em Andamento</option>
-                        <option value="concluida" {% if status_selecionado == 'concluida' %}selected{% endif %}>Concluída</option>
-                        <option value="cancelada" {% if status_selecionado == 'cancelada' %}selected{% endif %}>Cancelada</option>
-                    </select>
-                </div>
+                    {% endfor %}
+                </select>
             </div>
-
-            <!-- Ações dos Filtros -->
-            <div class="filter-actions">
-                <button type="submit" class="btn-filter-primary">
-                    <span class="btn-icon">🔍</span>
-                    Aplicar Filtros
-                </button>
-                <a href="{% url 'series:list' %}" class="btn-filter-secondary" aria-label="Limpar todos os filtros">
-                    <span class="btn-icon">🔄</span>
-                    Limpar Filtros
-                </a>
-                <button type="button" class="btn-filter-save" id="save-filters">
-                    <span class="btn-icon">💾</span>
-                    Salvar Preferências
-                </button>
+            
+            <!-- Ordenação -->
+            <div>
+                <label for="sort" class="form-label">Ordenar por</label>
+                <select id="sort" name="sort" class="form-input">
+                    <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>Título</option>
+                    <option value="-rating" {% if request.GET.sort == '-rating' %}selected{% endif %}>Maior Avaliação</option>
+                    <option value="-created_at" {% if request.GET.sort == '-created_at' %}selected{% endif %}>Mais Recentes</option>
+                    <option value="-views" {% if request.GET.sort == '-views' %}selected{% endif %}>Mais Populares</option>
+                </select>
             </div>
         </form>
     </div>
-</section>
+</div>
 
-<!-- Resultados e Informações -->
-<section class="results-section" aria-labelledby="results-title">
-    <div class="results-header">
-        <h2 id="results-title" class="results-title">Séries Encontradas</h2>
+<!-- Lista de Séries -->
+<div class="series-grid">
+    {% for series in series_list %}
+    <div class="series-card group">
+        <!-- Poster -->
+        <div class="relative overflow-hidden">
+            <img src="{{ series.poster_url }}" 
+                 alt="{{ series.title }}"
+                 class="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-300">
+            
+            <!-- Overlay com ações -->
+            <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-4">
+                <a href="{% url 'series:detail' series.id %}" 
+                   class="bg-white text-gray-900 rounded-full p-2 hover:bg-gray-100 transition-colors"
+                   title="Ver detalhes">
+                    <i class="fas fa-eye"></i>
+                </a>
+                <button class="bg-white text-gray-900 rounded-full p-2 hover:bg-gray-100 transition-colors"
+                        data-favorite="{{ series.id }}"
+                        title="{% if series.is_favorite %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
+                    <i class="{% if series.is_favorite %}fas{% else %}far{% endif %} fa-heart {% if series.is_favorite %}text-red-500{% endif %}"></i>
+                </button>
+            </div>
+        </div>
         
-        {% if search or genero_selecionado or ano_selecionado %}
-        <div class="active-filters">
-            <span class="filters-label">Filtros ativos:</span>
-            <div class="filters-tags">
-                {% if search %}
-                <span class="filter-tag">
-                    Busca: "{{ search }}"
-                    <button class="tag-remove" data-filter="search" aria-label="Remover filtro de busca">×</button>
-                </span>
-                {% endif %}
-                {% if genero_selecionado %}
-                <span class="filter-tag">
-                    Gênero: {{ genero_selecionado }}
-                    <button class="tag-remove" data-filter="genero" aria-label="Remover filtro de gênero">×</button>
-                </span>
-                {% endif %}
-                {% if ano_selecionado %}
-                <span class="filter-tag">
-                    Ano: {{ ano_selecionado }}
-                    <button class="tag-remove" data-filter="ano" aria-label="Remover filtro de ano">×</button>
-                </span>
-                {% endif %}
+        <!-- Conteúdo -->
+        <div class="p-4">
+            <h3 class="text-lg font-semibold mb-2">{{ series.title }}</h3>
+            
+            <!-- Gêneros -->
+            <div class="mb-3 flex flex-wrap gap-2">
+                {% for genre in series.genres.all %}
+                    <span class="badge badge-secondary">{{ genre.name }}</span>
+                {% endfor %}
             </div>
-        </div>
-        {% endif %}
-
-        <div class="results-info">
-            <span class="results-count">
-                <strong>{{ series|length }}</strong> série{{ series|length|pluralize }} encontrada{{ series|length|pluralize }}
-            </span>
-            <div class="view-options">
-                <button class="view-option active" data-view="grid" aria-label="Visualização em grade">
-                    <span>⏹️</span>
-                </button>
-                <button class="view-option" data-view="list" aria-label="Visualização em lista">
-                    <span>📋</span>
-                </button>
+            
+            <!-- Avaliação -->
+            <div class="flex items-center space-x-2 mb-3">
+                <div class="rating" data-rating="{{ series.rating }}">
+                    {% for i in "12345" %}
+                        <i class="fas fa-star {% if forloop.counter <= series.rating %}text-yellow-400{% else %}text-gray-300{% endif %}"></i>
+                    {% endfor %}
+                </div>
+                <span class="text-sm text-gray-600">({{ series.total_ratings }})</span>
+            </div>
+            
+            <!-- Descrição -->
+            <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ series.description }}</p>
+            
+            <!-- Informações adicionais -->
+            <div class="flex justify-between text-sm text-gray-500">
+                <span>
+                    <i class="fas fa-calendar-alt mr-1"></i>{{ series.year }}
+                </span>
+                <span>
+                    <i class="fas fa-clock mr-1"></i>{{ series.episodes }} episódios
+                </span>
             </div>
         </div>
     </div>
-
-    <!-- Grid de Séries -->
-    {% if series %}
-    <div class="series-grid" id="series-container" data-view="grid">
-        {% for serie in series %}
-        <article class="series-card" data-series-id="{{ serie.id }}" itemscope itemtype="https://schema.org/TVSeries">
-            <!-- Header do Card -->
-            <div class="card-header">
-                {% if serie.imagem %}
-                <img src="{{ serie.imagem.url }}" 
-                     alt="{{ serie.titulo }}"
-                     class="card-image"
-                     loading="lazy"
-                     itemprop="image">
-                {% else %}
-                <div class="card-image-placeholder" aria-hidden="true">
-                    <span class="placeholder-icon">📺</span>
-                </div>
-                {% endif %}
-
-                <div class="card-badges">
-                    <span class="genre-badge" data-genero="{{ serie.genero }}">
-                        {{ serie.get_genero_display }}
-                    </span>
-                    {% if serie.esta_em_alta %}
-                    <span class="trending-badge" aria-label="Série em alta">🔥</span>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Conteúdo do Card -->
-            <div class="card-content">
-                <h3 class="card-title" itemprop="name">
-                    <a href="{{ serie.get_absolute_url }}" class="card-link">
-                        {{ serie.titulo }}
-                    </a>
-                </h3>
-
-                <div class="card-meta">
-                    <span class="meta-item" itemprop="dateCreated">
-                        <span class="meta-icon">📅</span>
-                        {{ serie.ano }}
-                    </span>
-                    <span class="meta-item">
-                        <span class="meta-icon">⭐</span>
-                        <span itemprop="aggregateRating">{{ serie.avaliacao_media|default:"N/A" }}</span>
-                    </span>
-                    <span class="meta-item">
-                        <span class="meta-icon">👤</span>
-                        {{ serie.criado_por.username }}
-                    </span>
-                </div>
-
-                <p class="card-description" itemprop="description">
-                    {{ serie.descricao|truncatewords:25 }}
-                </p>
-
-                <div class="card-stats">
-                    <span class="stat">
-                        <strong>{{ serie.total_episodios }}</strong> episódios
-                    </span>
-                    <span class="stat">
-                        <strong>{{ serie.total_temporadas }}</strong> temporadas
-                    </span>
-                </div>
-            </div>
-
-            <!-- Footer do Card -->
-            <footer class="card-footer">
-                <div class="card-actions">
-                    <a href="{{ serie.get_absolute_url }}" class="btn-card-primary" aria-label="Ver detalhes de {{ serie.titulo }}">
-                        <span class="btn-icon">👁️</span>
-                        Ver Detalhes
-                    </a>
-                    
-                    {% if user.is_authenticated %}
-                    <div class="card-interactions">
-                        <button class="btn-favorite" data-series-id="{{ serie.id }}" aria-label="Adicionar aos favoritos">
-                            <span class="favorite-icon">🤍</span>
-                        </button>
-                        <button class="btn-watchlist" data-series-id="{{ serie.id }}" aria-label="Adicionar à watchlist">
-                            <span class="watchlist-icon">📋</span>
-                        </button>
-                    </div>
-                    {% endif %}
-                </div>
-
-                {% if user.is_authenticated and user == serie.criado_por %}
-                <div class="card-admin-actions">
-                    <a href="{% url 'series:update' serie.pk %}" class="btn-edit" aria-label="Editar série {{ serie.titulo }}">
-                        <span class="btn-icon">✏️</span>
-                        Editar
-                    </a>
-                    <a href="{% url 'series:delete' serie.pk %}" class="btn-delete" aria-label="Deletar série {{ serie.titulo }}">
-                        <span class="btn-icon">🗑️</span>
-                        Deletar
-                    </a>
-                </div>
-                {% endif %}
-            </footer>
-        </article>
-        {% endfor %}
-    </div>
-
-    <!-- Paginação -->
-    {% if is_paginated %}
-    <nav class="pagination-nav" aria-label="Navegação entre páginas de resultados">
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-            <li class="pagination-item">
-                <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                   class="pagination-link pagination-first" aria-label="Primeira página">
-                    <span aria-hidden="true">««</span>
-                </a>
-            </li>
-            <li class="pagination-item">
-                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                   class="pagination-link pagination-prev" aria-label="Página anterior">
-                    <span aria-hidden="true">‹</span>
-                </a>
-            </li>
-            {% endif %}
-
-            {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                <li class="pagination-item active">
-                    <span class="pagination-link current" aria-current="page">
-                        {{ num }}
-                    </span>
-                </li>
-                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                <li class="pagination-item">
-                    <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                       class="pagination-link">
-                        {{ num }}
-                    </a>
-                </li>
-                {% endif %}
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-            <li class="pagination-item">
-                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                   class="pagination-link pagination-next" aria-label="Próxima página">
-                    <span aria-hidden="true">›</span>
-                </a>
-            </li>
-            <li class="pagination-item">
-                <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                   class="pagination-link pagination-last" aria-label="Última página">
-                    <span aria-hidden="true">»»</span>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-
-        <div class="pagination-info">
-            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-            <span class="pagination-total">(Total: {{ paginator.count }} itens)</span>
+    {% empty %}
+    <div class="col-span-full text-center py-12">
+        <div class="text-6xl mb-4 text-gray-300">
+            <i class="fas fa-tv"></i>
         </div>
-    </nav>
-    {% endif %}
-
-    {% else %}
-    <!-- Estado Vazio -->
-    <div class="empty-state" aria-live="polite">
-        <div class="empty-icon">🔍</div>
-        <h3 class="empty-title">Nenhuma série encontrada</h3>
-        <p class="empty-description">
-            {% if search or genero_selecionado or ano_selecionado %}
-            Não encontramos resultados para os filtros aplicados. Tente:
-            <ul class="empty-suggestions">
-                <li>Verificar a ortografia dos termos buscados</li>
-                <li>Utilizar filtros menos específicos</li>
-                <li>Explorar todas as séries disponíveis</li>
-            </ul>
-            {% else %}
-            O catálogo está vazio no momento. 
-            {% if user.is_authenticated %}
-            <a href="{% url 'series:create' %}" class="empty-action">Seja o primeiro a adicionar uma série!</a>
-            {% endif %}
-            {% endif %}
+        <h3 class="text-xl font-semibold mb-2">Nenhuma série encontrada</h3>
+        <p class="text-gray-600">
+            Tente ajustar seus filtros ou fazer uma nova busca.
         </p>
-        {% if search or genero_selecionado or ano_selecionado %}
-        <a href="{% url 'series:list' %}" class="btn-empty-primary">
-            <span class="btn-icon">📺</span>
-            Ver Todas as Séries
-        </a>
-        {% endif %}
     </div>
-    {% endif %}
-</section>
+    {% endfor %}
+</div>
 
-<!-- Sugestões e Conteúdo Relacionado -->
-{% if series and not search and not genero_selecionado %}
-<section class="recommendations-section" aria-labelledby="recommendations-title">
-    <h2 id="recommendations-title" class="recommendations-title">Você Pode Gostar</h2>
-    <div class="recommendations-grid">
-        <!-- As 3 séries mais bem avaliadas -->
-        {% for serie in series_mais_populares|slice:":3" %}
-        <div class="recommendation-card">
-            <a href="{{ serie.get_absolute_url }}" class="recommendation-link">
-                {% if serie.imagem %}
-                <img src="{{ serie.imagem.url }}" alt="{{ serie.titulo }}" class="recommendation-image">
-                {% endif %}
-                <span class="recommendation-title">{{ serie.titulo }}</span>
-                <span class="recommendation-rating">⭐ {{ serie.avaliacao_media }}</span>
+<!-- Paginação -->
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+           class="page-item">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="page-item active">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+               class="page-item">
+                {{ num }}
             </a>
-        </div>
-        {% endfor %}
-    </div>
-</section>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+           class="page-item">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+    {% endif %}
+</div>
 {% endif %}
 {% endblock %}
 
-{% block extra_scripts %}
-<!-- Scripts específicos para esta página serão carregados aqui -->
+{% block extra_js %}
 <script>
- // Variáveis globais para configuração
-const PAGE_CONFIG = {
-    // A página atual é um número (integer).
-    currentPage: 1, // Exemplo: 1. Substitua por um valor padrão.
-    
-    // O total de páginas é um número (integer).
-    totalPages: 1, // Exemplo: 1. Substitua por um valor padrão.
-    
-    // O termo de busca é uma string.
-    searchTerm: "", // Exemplo: "".
-    
-    // Os endpoints da API são strings de URL.
-    apiEndpoints: {
-        search: "/api/series/search/",     // Exemplo de URL.
-        favorite: "/api/series/favorite/", // Exemplo de URL.
-        watchlist: "/api/series/watchlist/"// Exemplo de URL.
-    }
-};
-
-// Se você precisar que os valores sejam dinâmicos, eles devem ser passados para 
-// o JS após a renderização do template, por exemplo, por meio de data-attributes 
-// em um elemento HTML ou usando a sintaxe original dentro do seu template.
-</script>
-
-<!-- Inicialização dos Componentes JavaScript -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Configuração dinâmica baseada nos dados do template
-    const seriesGrid = document.getElementById('series-container');
-    const filtersForm = document.getElementById('filters-form');
-    
-    if (seriesGrid) {
-        // Passar dados dinâmicos para o JavaScript
-        seriesGrid.dataset.totalSeries = '{{ total_series }}';
-        seriesGrid.dataset.currentPage = '{{ page_obj.number|default:1 }}';
-        seriesGrid.dataset.totalPages = '{{ page_obj.paginator.num_pages|default:1 }}';
-        seriesGrid.dataset.searchTerm = '{{ search|default:""|escapejs }}';
-    }
-
-    // Inicializar sistema de visualização (grid/list)
-    initViewSystem();
-    
-    // Inicializar filtros avançados
-    initAdvancedFilters();
-    
-    // Inicializar sistema de favoritos
-    initFavoriteSystem();
-    
-    // Inicializar tooltips e interações
-    initUIInteractions();
+// Atualizar formulário automaticamente quando filtros mudarem
+document.querySelectorAll('select[name="genre"], select[name="sort"]').forEach(select => {
+    select.addEventListener('change', () => {
+        select.closest('form').submit();
+    });
 });
 
-// Sistema de Visualização (Grid/List)
-function initViewSystem() {
-    const viewOptions = document.querySelectorAll('.view-option');
-    const seriesContainer = document.getElementById('series-container');
+// Busca com debounce
+const searchInput = document.querySelector('input[name="search"]');
+let debounceTimer;
+
+searchInput.addEventListener('input', e => {
+    clearTimeout(debounceTimer);
     
-    viewOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            const viewType = this.dataset.view;
-            
-            // Atualizar estado visual
-            viewOptions.forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Aplicar visualização
-            seriesContainer.dataset.view = viewType;
-            seriesContainer.className = `series-view series-view--${viewType}`;
-            
-            // Salvar preferência
-            localStorage.setItem('seriesViewPreference', viewType);
-        });
-    });
-    
-    // Restaurar preferência salva
-    const savedView = localStorage.getItem('seriesViewPreference') || 'grid';
-    const savedOption = document.querySelector(`[data-view="${savedView}"]`);
-    if (savedOption) savedOption.click();
-}
-
-// Sistema de Filtros Avançados
-function initAdvancedFilters() {
-    const filtersToggle = document.querySelector('.filters-toggle');
-    const filtersContent = document.getElementById('filters-content');
-    
-    if (filtersToggle && filtersContent) {
-        filtersToggle.addEventListener('click', function() {
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', !isExpanded);
-            filtersContent.hidden = isExpanded;
-            
-            this.querySelector('.toggle-icon').textContent = isExpanded ? '⚙️' : '➖';
-            this.innerHTML = this.innerHTML.replace(
-                isExpanded ? 'Mostrar Filtros' : 'Ocultar Filtros',
-                isExpanded ? 'Ocultar Filtros' : 'Mostrar Filtros'
-            );
-        });
-    }
-
-    // Remoção de filtros ativos
-    const removeButtons = document.querySelectorAll('.tag-remove');
-    removeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const filterType = this.dataset.filter;
-            removeFilter(filterType);
-        });
-    });
-
-    // Busca em tempo real (debounce)
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        let searchTimeout;
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                if (this.value.length >= 3 || this.value.length === 0) {
-                    performSearch(this.value);
-                }
-            }, 500);
-        });
-    }
-}
-
-// Sistema de Favoritos
-function initFavoriteSystem() {
-    const favoriteButtons = document.querySelectorAll('.btn-favorite');
-    
-    favoriteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const seriesId = this.dataset.seriesId;
-            toggleFavorite(seriesId, this);
-        });
-    });
-}
-
-// Interações de UI
-function initUIInteractions() {
-    // Tooltips para elementos interativos
-    const elementsWithTooltip = document.querySelectorAll('[data-tooltip]');
-    elementsWithTooltip.forEach(element => {
-        element.addEventListener('mouseenter', showTooltip);
-        element.addEventListener('mouseleave', hideTooltip);
-    });
-
-    // Loading states para ações
-    const actionButtons = document.querySelectorAll('.btn-card-primary, .btn-favorite, .btn-watchlist');
-    actionButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            this.classList.add('loading');
-        });
-    });
-
-    // Intersection Observer para lazy loading de imagens
-    if ('IntersectionObserver' in window) {
-        const lazyImages = document.querySelectorAll('.card-image[loading="lazy"]');
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    imageObserver.unobserve(img);
-                }
-            });
-        });
-
-        lazyImages.forEach(img => imageObserver.observe(img));
-    }
-}
-
-// Funções Auxiliares
-function removeFilter(filterType) {
-    const url = new URL(window.location);
-    url.searchParams.delete(filterType);
-    window.location.href = url.toString();
-}
-
-function performSearch(query) {
-    const url = new URL(window.location);
-    if (query) {
-        url.searchParams.set('search', query);
-    } else {
-        url.searchParams.delete('search');
-    }
-    window.location.href = url.toString();
-}
-
-function toggleFavorite(seriesId, button) {
-    // Simular API call - implementar com sua API real
-    button.classList.add('loading');
-    
-    fetch(PAGE_CONFIG.apiEndpoints.favorite, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
-        },
-        body: JSON.stringify({ series_id: seriesId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        button.classList.remove('loading');
-        if (data.success) {
-            button.querySelector('.favorite-icon').textContent = data.is_favorite ? '❤️' : '🤍';
-            showToast(data.message || 'Favorito atualizado!');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        button.classList.remove('loading');
-        showToast('Erro ao atualizar favorito', 'error');
-    });
-}
-
-function getCSRFToken() {
-    return document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-}
-
-function showToast(message, type = 'success') {
-    // Implementar sistema de toast notifications
-    console.log(`${type}: ${message}`);
-}
-
-function showTooltip(event) {
-    // Implementar sistema de tooltips
-}
-
-function hideTooltip(event) {
-    // Implementar sistema de tooltips
-}
-
-// Exportar funções para uso global (se necessário)
-window.SeriesList = {
-    initViewSystem,
-    initAdvancedFilters,
-    toggleFavorite,
-    performSearch
-};
+    debounceTimer = setTimeout(() => {
+        e.target.closest('form').submit();
+    }, 500);
+});
 </script>
-
-<!-- Schema.org para SEO da página de listagem -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "name": "Catálogo de Séries",
-  "description": "Lista completa de séries de TV disponíveis na plataforma",
-  "numberOfItems": "{{ total_series }}",
-  "itemListOrder": "{% if ordenacao == 'recentes' %}Descending{% else %}Ascending{% endif %}",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "{% url 'series:list' %}"
-  }
-}
-</script>
-
-<!-- Componente de Loading para operações assíncronas -->
-<template id="loading-template">
-    <div class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Carregando...</p>
-    </div>
-</template>
-
-<!-- Template para cards de série (para possível renderização client-side) -->
-<template id="series-card-template">
-    <article class="series-card" itemscope itemtype="https://schema.org/TVSeries">
-        <div class="card-header">
-            <img class="card-image" loading="lazy" alt="" itemprop="image">
-            <div class="card-badges">
-                <span class="genre-badge" itemprop="genre"></span>
-            </div>
-        </div>
-        <div class="card-content">
-            <h3 class="card-title" itemprop="name">
-                <a class="card-link" itemprop="url"></a>
-            </h3>
-            <div class="card-meta">
-                <span class="meta-item" itemprop="dateCreated"></span>
-                <span class="meta-item" itemprop="aggregateRating"></span>
-                <span class="meta-item" itemprop="author"></span>
-            </div>
-            <p class="card-description" itemprop="description"></p>
-            <div class="card-stats">
-                <span class="stat" itemprop="numberOfEpisodes"></span>
-                <span class="stat" itemprop="numberOfSeasons"></span>
-            </div>
-        </div>
-        <footer class="card-footer">
-            <!-- Actions -->
-        </footer>
-    </article>
-</template>
 {% endblock %}
-
-<!-- Footer Específico da Página de Listagem -->
-<footer class="page-footer page-footer--catalog" role="contentinfo">
-    <div class="footer-content">
-        <div class="footer-section">
-            <h4 class="footer-title">Estatísticas do Catálogo</h4>
-            <div class="catalog-stats">
-                <div class="stat-item">
-                    <span class="stat-number">{{ total_series }}</span>
-                    <span class="stat-label">Séries Cadastradas</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">{{ total_generos }}</span>
-                    <span class="stat-label">Gêneros Disponíveis</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">{{ recent_added }}</span>
-                    <span class="stat-label">Novas Este Mês</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer-section">
-            <h4 class="footer-title">Navegação Rápida</h4>
-            <ul class="footer-links">
-                <li><a href="{% url 'series:home' %}" class="footer-link">🏠 Página Inicial</a></li>
-                <li><a href="{% url 'series:create' %}" class="footer-link">➕ Adicionar Série</a></li>
-                <li><a href="/generos" class="footer-link">📋 Ver por Gênero</a></li>
-                <li><a href="/populares" class="footer-link">🔥 Mais Populares</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-section">
-            <h4 class="footer-title">Ajuda</h4>
-            <ul class="footer-links">
-                <li><a href="/ajuda/pesquisa" class="footer-link">🔍 Como Pesquisar</a></li>
-                <li><a href="/ajuda/filtros" class="footer-link">⚙️ Usar Filtros</a></li>
-                <li><a href="/contato" class="footer-link">📧 Reportar Problema</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="footer-bottom">
-        <p class="footer-copyright">
-            &copy; {% now "Y" %} Catálogo de Séries TV. 
-            <span class="footer-version">v{{ APP_VERSION }}</span>
-        </p>
-        <p class="footer-notice">
-            Última atualização: {% now "d/m/Y H:i" %}
-            {% if user.is_staff %}
-            | <a href="/admin/series/serie/" class="admin-link">Painel Admin</a>
-            {% endif %}
-        </p>
-    </div>
-</footer>
-
-<!-- Modal de Confirmação para Ações -->
-<dialog id="actionModal" class="modal">
-    <div class="modal-content">
-        <h3 class="modal-title" id="modalTitle">Confirmar Ação</h3>
-        <div class="modal-body">
-            <p id="modalMessage">Tem certeza que deseja realizar esta ação?</p>
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn--secondary" onclick="this.closest('dialog').close()">Cancelar</button>
-            <button class="btn btn--primary" id="modalConfirm">Confirmar</button>
-        </div>
-    </div>
-</dialog>
-
-<!-- Sistema de Notificações Toast -->
-<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
-
-<!-- Fallback para JavaScript Desabilitado -->
-<noscript>
-    <div class="noscript-warning">
-        <div class="warning-content">
-            <h3>⚠️ JavaScript Recomendado</h3>
-            <p>Para uma experiência completa com busca em tempo real e filtros avançados, habilite o JavaScript.</p>
-            <p>Você ainda pode usar a funcionalidade básica de busca e filtros.</p>
-        </div>
-    </div>
-</noscript>
-
-</main>
-
-<!-- Script de Análise de Uso -->
-<script>
-// Analytics de interação com a página
-if (typeof gtag !== 'undefined') {
-    gtag('event', 'page_view', {
-        'page_title': 'Catálogo de Séries',
-        'page_location': window.location.href,
-        'total_series': {{ total_series }},
-        'current_filters': {
-            'search': '{{ search|default:"" }}',
-            'genero': '{{ genero_selecionado|default:"" }}',
-            'ano': '{{ ano_selecionado|default:"" }}'
-        }
-    });
-}
-
-// Monitoramento de performance
-window.addEventListener('load', function() {
-    if ('performance' in window) {
-        const perfData = performance.timing;
-        const loadTime = perfData.loadEventEnd - perfData.navigationStart;
-        
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'timing_complete', {
-                'name': 'page_load',
-                'value': loadTime,
-                'event_category': 'Load Time'
-            });
-        }
-    }
-});
-</script>
-
-</body>
-</html>

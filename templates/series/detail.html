@@ -1,783 +1,376 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Breaking Bad - Plataforma Séries TV</title>
-    <meta
-      name="description"
-      content="Breaking Bad - Um professor de química do ensino médio diagnosticado com câncer recorre à fabricação de metanfetamina. Drama | 2008-2013"
-    />
-    <meta
-      name="keywords"
-      content="Breaking Bad, série, drama, Walter White, Jesse Pinkman, AMC"
-    />
+{% extends 'base.html' %}
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Breaking Bad - Plataforma Séries TV" />
-    <meta
-      property="og:description"
-      content="Um professor de química do ensino médio diagnosticado com câncer recorre à fabricação de metanfetamina para garantir o futuro de sua família."
-    />
-    <meta property="og:image" content="/images/breaking-bad-cover.jpg" />
-    <meta
-      property="og:url"
-      content="https://seriestv.com/series/breaking-bad"
-    />
-    <meta property="og:type" content="video.tv_show" />
+{% block title %}{{ series.title }} - Series & Filmes{% endblock %}
 
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Breaking Bad - Plataforma Séries TV" />
-    <meta
-      name="twitter:description"
-      content="Um professor de química do ensino médio diagnosticado com câncer recorre à fabricação de metanfetamina."
-    />
-    <meta name="twitter:image" content="/images/breaking-bad-cover.jpg" />
-      <script src="https://cdn.tailwindcss.com"></script>
+{% block content %}
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- Header com imagem de fundo -->
+    <div class="relative h-64 md:h-96">
+        <!-- Imagem de fundo -->
+        <div class="absolute inset-0">
+            <img src="{{ series.backdrop_url }}" 
+                 alt="{{ series.title }}"
+                 class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+        </div>
+        
+        <!-- Conteúdo do header -->
+        <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <div class="container-custom flex flex-col md:flex-row items-end space-y-4 md:space-y-0">
+                <!-- Poster -->
+                <div class="flex-shrink-0 -mb-20 md:-mb-32 w-32 md:w-48">
+                    <img src="{{ series.poster_url }}" 
+                         alt="{{ series.title }}"
+                         class="w-full rounded-lg shadow-lg">
+                </div>
+                
+                <!-- Informações -->
+                <div class="md:ml-6 flex-grow">
+                    <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ series.title }}</h1>
+                    <div class="flex flex-wrap items-center gap-4 text-sm md:text-base">
+                        <span>
+                            <i class="fas fa-calendar-alt mr-1"></i>{{ series.year }}
+                        </span>
+                        <span>
+                            <i class="fas fa-clock mr-1"></i>{{ series.episodes }} episódios
+                        </span>
+                        <span>
+                            <i class="fas fa-star text-yellow-400 mr-1"></i>{{ series.rating|default:"N/A" }}
+                        </span>
+                        <div class="flex flex-wrap gap-2">
+                            {% for genre in series.genres.all %}
+                                <span class="badge badge-primary">{{ genre.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ações -->
+                <div class="flex space-x-4 md:self-start">
+                    <button class="btn-secondary"
+                            data-favorite="{{ series.id }}"
+                            title="{% if series.is_favorite %}Remover dos favoritos{% else %}Adicionar aos favoritos{% endif %}">
+                        <i class="{% if series.is_favorite %}fas{% else %}far{% endif %} fa-heart {% if series.is_favorite %}text-red-500{% endif %} mr-2"></i>
+                        Favorito
+                    </button>
+                    {% if user.is_staff %}
+                        <a href="{% url 'series:edit' series.id %}" class="btn-primary">
+                            <i class="fas fa-edit mr-2"></i>Editar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
     
-    <!-- Seus outros links CSS -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-</head>
-  </head>
-  <body>
-    <!-- Header com Navegação -->
-    <header class="site-header" role="banner">
-      <nav class="main-navigation" aria-label="Navegação principal">
-        <div class="nav-container">
-          <a href="/home" class="site-logo">
-            <span class="logo-icon">📺</span>
-            <span class="logo-text">Séries TV</span>
-          </a>
+    <!-- Conteúdo principal -->
+    <div class="container-custom py-8 mt-20 md:mt-32">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Coluna principal -->
+            <div class="lg:col-span-2">
+                <!-- Sinopse -->
+                <section class="mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Sinopse</h2>
+                    <p class="text-gray-600">{{ series.description }}</p>
+                </section>
+                
+                <!-- Temporadas -->
+                <section class="mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Temporadas</h2>
+                    <div class="space-y-4">
+                        {% for season in series.seasons.all %}
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-semibold">Temporada {{ season.number }}</h3>
+                                    <span class="text-sm text-gray-500">{{ season.episodes.count }} episódios</span>
+                                </div>
+                                <div class="grid gap-2">
+                                    {% for episode in season.episodes.all %}
+                                        <div class="bg-white p-3 rounded-md shadow-sm flex justify-between items-center">
+                                            <div>
+                                                <span class="font-medium">{{ episode.number }}. {{ episode.title }}</span>
+                                                <p class="text-sm text-gray-600">{{ episode.description|truncatewords:20 }}</p>
+                                            </div>
+                                            <button class="text-gray-400 hover:text-primary"
+                                                    data-watched="{{ episode.id }}"
+                                                    title="Marcar como assistido">
+                                                <i class="{% if episode.is_watched %}fas{% else %}far{% endif %} fa-check-circle"></i>
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500 text-center py-4">
+                                Nenhuma temporada cadastrada ainda.
+                            </p>
+                        {% endfor %}
+                    </div>
+                </section>
+                
+                <!-- Avaliações -->
+                <section id="reviews" class="mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold">Avaliações</h2>
+                        <button class="btn-primary" data-modal="review-modal">
+                            <i class="fas fa-star mr-2"></i>Avaliar
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        {% for review in series.reviews.all %}
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex items-center">
+                                        <img src="{{ review.user.avatar_url|default:'/static/images/default-avatar.png' }}"
+                                             alt="{{ review.user.username }}"
+                                             class="w-10 h-10 rounded-full mr-3">
+                                        <div>
+                                            <h4 class="font-medium">{{ review.user.username }}</h4>
+                                            <div class="flex items-center">
+                                                <div class="rating text-sm">
+                                                    {% for i in "12345" %}
+                                                        <i class="fas fa-star {% if forloop.counter <= review.rating %}text-yellow-400{% else %}text-gray-300{% endif %}"></i>
+                                                    {% endfor %}
+                                                </div>
+                                                <span class="text-sm text-gray-500 ml-2">
+                                                    {{ review.created_at|timesince }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if review.user == user %}
+                                        <div class="relative" x-data="{ open: false }">
+                                            <button @click="open = !open" class="text-gray-400 hover:text-gray-600">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <div x-show="open" 
+                                                 @click.away="open = false"
+                                                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                                                <button class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                                                        data-modal="edit-review-modal"
+                                                        data-review-id="{{ review.id }}">
+                                                    <i class="fas fa-edit mr-2"></i>Editar
+                                                </button>
+                                                <button class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                                                        data-delete-review="{{ review.id }}">
+                                                    <i class="fas fa-trash-alt mr-2"></i>Excluir
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <p class="text-gray-600">{{ review.content }}</p>
+                            </div>
+                        {% empty %}
+                            <div class="text-center py-8 text-gray-500">
+                                <p>Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <!-- Estatísticas -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold mb-4">Estatísticas</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Avaliação Média</span>
+                            <span class="font-medium">{{ series.rating|default:"N/A" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total de Avaliações</span>
+                            <span class="font-medium">{{ series.total_ratings }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Visualizações</span>
+                            <span class="font-medium">{{ series.views }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Favoritada</span>
+                            <span class="font-medium">{{ series.favorites.count }}x</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Séries Relacionadas -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Séries Relacionadas</h3>
+                    <div class="space-y-4">
+                        {% for related in related_series %}
+                            <a href="{% url 'series:detail' related.id %}" class="block hover:bg-gray-100 rounded-lg transition-colors">
+                                <div class="flex items-center p-2">
+                                    <img src="{{ related.poster_url }}" 
+                                         alt="{{ related.title }}"
+                                         class="w-16 h-24 object-cover rounded">
+                                    <div class="ml-3">
+                                        <h4 class="font-medium">{{ related.title }}</h4>
+                                        <div class="text-sm text-gray-500">{{ related.year }}</div>
+                                        <div class="flex items-center text-sm">
+                                            <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                            <span>{{ related.rating|default:"N/A" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% empty %}
+                            <p class="text-gray-500 text-center">
+                                Nenhuma série relacionada encontrada.
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-          <div class="nav-menu">
-            <a href="/home" class="nav-link">Início</a>
-            <a href="/catalogo" class="nav-link">Catálogo</a>
-            <a href="/generos" class="nav-link">Gêneros</a>
-            <a href="/favoritos" class="nav-link">Favoritos</a>
-            <a href="/perfil" class="nav-link">Perfil</a>
-          </div>
-
-          <div class="nav-actions">
-            <button class="search-toggle" aria-label="Abrir busca">
-              <span class="search-icon">🔍</span>
+<!-- Modal de Avaliação -->
+<div id="review-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="text-lg font-semibold">Avaliar {{ series.title }}</h3>
+            <button type="button" data-close-modal>
+                <i class="fas fa-times"></i>
             </button>
-            <div class="user-menu">
-              <button class="user-avatar" aria-label="Menu do usuário">
-                <span class="avatar-text">AU</span>
-              </button>
-            </div>
-          </div>
         </div>
-      </nav>
-    </header>
-
-    <!-- Breadcrumb Navigation -->
-    <nav class="breadcrumb-nav" aria-label="Navegação estrutural">
-      <div class="container">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="/home" class="breadcrumb-link">
-              <span class="breadcrumb-icon">🏠</span>
-              Início
-            </a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="/catalogo" class="breadcrumb-link">
-              <span class="breadcrumb-icon">📺</span>
-              Catálogo
-            </a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="/generos/drama" class="breadcrumb-link">
-              <span class="breadcrumb-icon">🎭</span>
-              Drama
-            </a>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            <span class="breadcrumb-icon">🎬</span>
-            Breaking Bad
-          </li>
-        </ol>
-      </div>
-    </nav>
-
-    <!-- Conteúdo Principal -->
-    <main class="series-detail" role="main">
-      <div class="container">
-        <!-- Hero Section da Série -->
-        <section class="series-hero" aria-labelledby="series-title">
-          <div
-            class="hero-background"
-            style="background-image: url('/images/breaking-bad-backdrop.jpg')"
-            aria-hidden="true"
-          ></div>
-          <div class="hero-overlay"></div>
-
-          <div class="hero-content">
-            <div class="series-poster">
-              <img
-                src="/images/breaking-bad-cover.jpg"
-                alt="Poster da série Breaking Bad"
-                class="poster-image"
-                loading="lazy"
-                width="300"
-                height="450"
-              />
-
-              <!-- Quick Actions sobre o poster -->
-              <div class="poster-actions">
-                <button
-                  class="action-btn action-btn--favorite"
-                  aria-label="Adicionar aos favoritos"
-                  title="Favoritar"
-                >
-                  <span class="btn-icon">❤️</span>
+        
+        <form method="post" action="{% url 'series:review' series.id %}" data-ajax>
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sua avaliação</label>
+                    <div class="rating text-2xl">
+                        {% for i in "12345" %}
+                            <i class="far fa-star cursor-pointer hover:text-yellow-400 transition-colors"></i>
+                        {% endfor %}
+                        <input type="hidden" name="rating" required>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="review-content" class="block text-sm font-medium text-gray-700 mb-2">Comentário</label>
+                    <textarea id="review-content"
+                              name="content"
+                              rows="4"
+                              class="form-input"
+                              required></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" 
+                        class="btn-secondary"
+                        data-close-modal>
+                    Cancelar
                 </button>
-                <button
-                  class="action-btn action-btn--watchlist"
-                  aria-label="Adicionar à lista"
-                  title="Minha Lista"
-                >
-                  <span class="btn-icon">📋</span>
+                <button type="submit" class="btn-primary">
+                    Enviar Avaliação
                 </button>
-                <button
-                  class="action-btn action-btn--share"
-                  aria-label="Compartilhar série"
-                  title="Compartilhar"
-                >
-                  <span class="btn-icon">📤</span>
-                </button>
-              </div>
             </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
 
-            <div class="series-info">
-              <header class="series-header">
-                <h1 id="series-title" class="series-title">Breaking Bad</h1>
-                <div class="series-subtitle">A química do crime</div>
-              </header>
+{% block extra_js %}
+<script>
+// Sistema de avaliação
+document.querySelectorAll('.rating').forEach(container => {
+    const stars = container.querySelectorAll('i');
+    const input = container.querySelector('input[name="rating"]');
+    
+    if (stars && input) {
+        stars.forEach((star, index) => {
+            star.addEventListener('click', () => {
+                const rating = index + 1;
+                input.value = rating;
+                
+                stars.forEach((s, i) => {
+                    s.className = `${i < rating ? 'fas' : 'far'} fa-star ${i < rating ? 'text-yellow-400' : ''}`;
+                });
+            });
+            
+            star.addEventListener('mouseover', () => {
+                stars.forEach((s, i) => {
+                    s.className = `${i <= index ? 'fas' : 'far'} fa-star ${i <= index ? 'text-yellow-400' : ''}`;
+                });
+            });
+            
+            star.addEventListener('mouseout', () => {
+                if (!input.value) {
+                    stars.forEach(s => {
+                        s.className = 'far fa-star';
+                    });
+                } else {
+                    stars.forEach((s, i) => {
+                        s.className = `${i < input.value ? 'fas' : 'far'} fa-star ${i < input.value ? 'text-yellow-400' : ''}`;
+                    });
+                }
+            });
+        });
+    }
+});
 
-              <div class="series-meta">
-                <div class="meta-badges">
-                  <span class="genre-badge genre-badge--drama">
-                    <span class="badge-icon">🎭</span>
-                    Drama
-                  </span>
-                  <span class="rating-badge rating-badge--high">
-                    <span class="badge-icon">⭐</span>
-                    9.5/10
-                  </span>
-                  <span class="year-badge">
-                    <span class="badge-icon">📅</span>
-                    2008-2013
-                  </span>
-                  <span class="episodes-badge">
-                    <span class="badge-icon">📺</span>
-                    62 episódios
-                  </span>
-                </div>
-              </div>
+// Marcar episódio como assistido
+document.querySelectorAll('[data-watched]').forEach(button => {
+    button.addEventListener('click', async () => {
+        const episodeId = button.dataset.watched;
+        
+        try {
+            const response = await fetch(`/api/episodes/${episodeId}/watched/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const icon = button.querySelector('i');
+                
+                icon.className = `${data.is_watched ? 'fas' : 'far'} fa-check-circle`;
+                
+                showNotification(
+                    data.is_watched ? 'Episódio marcado como assistido' : 'Episódio desmarcado',
+                    'success'
+                );
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar episódio:', error);
+            showNotification('Erro ao atualizar episódio', 'error');
+        }
+    });
+});
 
-              <div class="series-description">
-                <h2 class="description-title">Sinopse</h2>
-                <p class="description-text">
-                  Um professor de química do ensino médio diagnosticado com
-                  câncer de pulmão inoperável recorre à fabricação e venda de
-                  metanfetamina para garantir o futuro financeiro de sua
-                  família. Walter White, junto com seu ex-aluno Jesse Pinkman,
-                  embarca em uma jornada que transforma um homem comum em um dos
-                  criminosos mais temidos do submundo das drogas.
-                </p>
-                <p class="description-text">
-                  A série acompanha a transformação psicológica de Walter de um
-                  professor respeitado para "Heisenberg", explorando temas como
-                  moralidade, família, orgulho e as consequências das escolhas
-                  que fazemos.
-                </p>
-              </div>
-
-              <!-- Estatísticas e Avaliações -->
-              <div class="series-stats">
-                <div class="stats-grid">
-                  <div class="stat-item">
-                    <span class="stat-value">9.5</span>
-                    <span class="stat-label">Avaliação IMDb</span>
-                    <div class="stat-extra">1.8M avaliações</div>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-value">95%</span>
-                    <span class="stat-label">Rotten Tomatoes</span>
-                    <div class="stat-extra">Críticos</div>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-value">5</span>
-                    <span class="stat-label">Temporadas</span>
-                    <div class="stat-extra">62 episódios</div>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-value">47m</span>
-                    <span class="stat-label">Duração média</span>
-                    <div class="stat-extra">por episódio</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Botões de Ação Principais -->
-              <div class="primary-actions">
-                <button class="btn btn--primary btn--large">
-                  <span class="btn-icon">▶️</span>
-                  Assistir Trailer
-                </button>
-                <button class="btn btn--secondary btn--large">
-                  <span class="btn-icon">📋</span>
-                  Adicionar à Lista
-                </button>
-                <button class="btn btn--outline btn--large">
-                  <span class="btn-icon">💬</span>
-                  Discussões (234)
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Informações Detalhadas -->
-        <section class="series-details" aria-labelledby="details-title">
-          <div class="details-grid">
-            <!-- Informações da Produção -->
-            <div class="details-card">
-              <h3 id="details-title" class="card-title">
-                <span class="title-icon">🎬</span>
-                Informações da Produção
-              </h3>
-
-              <div class="details-list">
-                <div class="detail-item">
-                  <span class="detail-label">Criador:</span>
-                  <span class="detail-value">Vince Gilligan</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Produtoras:</span>
-                  <span class="detail-value"
-                    >High Bridge Entertainment, Gran Via Productions</span
-                  >
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Rede Original:</span>
-                  <span class="detail-value">AMC</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">País de Origem:</span>
-                  <span class="detail-value">Estados Unidos</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Idioma Original:</span>
-                  <span class="detail-value">Inglês</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Status:</span>
-                  <span class="detail-value status-finished">Finalizada</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Elenco Principal -->
-            <div class="details-card">
-              <h3 class="card-title">
-                <span class="title-icon">👥</span>
-                Elenco Principal
-              </h3>
-
-              <div class="cast-list">
-                <div class="cast-member">
-                  <div class="cast-photo">
-                    <img
-                      src="/images/cast/bryan-cranston.jpg"
-                      alt="Bryan Cranston"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div class="cast-info">
-                    <div class="cast-name">Bryan Cranston</div>
-                    <div class="cast-character">Walter White</div>
-                  </div>
-                </div>
-
-                <div class="cast-member">
-                  <div class="cast-photo">
-                    <img
-                      src="/images/cast/aaron-paul.jpg"
-                      alt="Aaron Paul"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div class="cast-info">
-                    <div class="cast-name">Aaron Paul</div>
-                    <div class="cast-character">Jesse Pinkman</div>
-                  </div>
-                </div>
-
-                <div class="cast-member">
-                  <div class="cast-photo">
-                    <img
-                      src="/images/cast/anna-gunn.jpg"
-                      alt="Anna Gunn"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div class="cast-info">
-                    <div class="cast-name">Anna Gunn</div>
-                    <div class="cast-character">Skyler White</div>
-                  </div>
-                </div>
-
-                <div class="cast-member">
-                  <div class="cast-photo">
-                    <img
-                      src="/images/cast/dean-norris.jpg"
-                      alt="Dean Norris"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div class="cast-info">
-                    <div class="cast-name">Dean Norris</div>
-                    <div class="cast-character">Hank Schrader</div>
-                  </div>
-                </div>
-              </div>
-
-              <button class="btn btn--outline btn--small cast-expand">
-                Ver Elenco Completo
-              </button>
-            </div>
-
-            <!-- Metadados do Sistema -->
-            <div class="details-card">
-              <h3 class="card-title">
-                <span class="title-icon">🔧</span>
-                Informações do Sistema
-              </h3>
-
-              <div class="system-details">
-                <div class="detail-item">
-                  <span class="detail-label">Adicionado por:</span>
-                  <span class="detail-value">
-                    <a href="/usuarios/admin_user" class="user-link"
-                      >admin_user</a
-                    >
-                  </span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Data de Adição:</span>
-                  <span class="detail-value">15/03/2024</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Última Atualização:</span>
-                  <span class="detail-value">22/09/2025</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Visualizações:</span>
-                  <span class="detail-value">45,892</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Nos Favoritos:</span>
-                  <span class="detail-value">2,341 usuários</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Temporadas e Episódios -->
-        <section class="series-episodes" aria-labelledby="episodes-title">
-          <header class="section-header">
-            <h3 id="episodes-title" class="section-title">
-              <span class="title-icon">📺</span>
-              Temporadas e Episódios
-            </h3>
-            <div class="season-selector">
-              <select class="season-select" aria-label="Selecionar temporada">
-                <option value="1" selected>Temporada 1 (7 episódios)</option>
-                <option value="2">Temporada 2 (13 episódios)</option>
-                <option value="3">Temporada 3 (13 episódios)</option>
-                <option value="4">Temporada 4 (13 episódios)</option>
-                <option value="5">Temporada 5 (16 episódios)</option>
-              </select>
-            </div>
-          </header>
-
-          <div class="episodes-list">
-            <div class="episode-item">
-              <div class="episode-number">1x01</div>
-              <div class="episode-thumbnail">
-                <img
-                  src="/images/episodes/breaking-bad-1x01.jpg"
-                  alt="Pilot"
-                  loading="lazy"
-                />
-                <button class="play-episode" aria-label="Assistir episódio">
-                  <span class="play-icon">▶️</span>
-                </button>
-              </div>
-              <div class="episode-info">
-                <h4 class="episode-title">Pilot</h4>
-                <p class="episode-description">
-                  Walter White, um professor de química de 50 anos, é
-                  diagnosticado com câncer de pulmão e decide fabricar
-                  metanfetamina para garantir o futuro financeiro de sua
-                  família.
-                </p>
-                <div class="episode-meta">
-                  <span class="episode-duration">58m</span>
-                  <span class="episode-date">20/01/2008</span>
-                  <div class="episode-rating">
-                    <span class="rating-stars">⭐⭐⭐⭐⭐</span>
-                    <span class="rating-value">9.0/10</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="episode-item">
-              <div class="episode-number">1x02</div>
-              <div class="episode-thumbnail">
-                <img
-                  src="/images/episodes/breaking-bad-1x02.jpg"
-                  alt="Cat's in the Bag..."
-                  loading="lazy"
-                />
-                <button class="play-episode" aria-label="Assistir episódio">
-                  <span class="play-icon">▶️</span>
-                </button>
-              </div>
-              <div class="episode-info">
-                <h4 class="episode-title">Cat's in the Bag...</h4>
-                <p class="episode-description">
-                  Walter e Jesse devem lidar com as consequências do primeiro
-                  cozinheiro e decidir o que fazer com seus prisioneiros no
-                  porão.
-                </p>
-                <div class="episode-meta">
-                  <span class="episode-duration">48m</span>
-                  <span class="episode-date">27/01/2008</span>
-                  <div class="episode-rating">
-                    <span class="rating-stars">⭐⭐⭐⭐</span>
-                    <span class="rating-value">8.8/10</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="episode-item">
-              <div class="episode-number">1x03</div>
-              <div class="episode-thumbnail">
-                <img
-                  src="/images/episodes/breaking-bad-1x03.jpg"
-                  alt="...And the Bag's in the River"
-                  loading="lazy"
-                />
-                <button class="play-episode" aria-label="Assistir episódio">
-                  <span class="play-icon">▶️</span>
-                </button>
-              </div>
-              <div class="episode-info">
-                <h4 class="episode-title">...And the Bag's in the River</h4>
-                <p class="episode-description">
-                  Walter luta com as consequências morais de suas ações enquanto
-                  Jesse lida com o limpeza. Skyler suspeita que algo está
-                  errado.
-                </p>
-                <div class="episode-meta">
-                  <span class="episode-duration">48m</span>
-                  <span class="episode-date">10/02/2008</span>
-                  <div class="episode-rating">
-                    <span class="rating-stars">⭐⭐⭐⭐⭐</span>
-                    <span class="rating-value">9.1/10</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button class="btn btn--outline load-more-episodes">
-            Ver Todos os Episódios da Temporada 1
-          </button>
-        </section>
-
-        <!-- Séries Relacionadas -->
-        <section class="related-series" aria-labelledby="related-title">
-          <header class="section-header">
-            <h3 id="related-title" class="section-title">
-              <span class="title-icon">🔗</span>
-              Séries Relacionadas
-            </h3>
-            <p class="section-subtitle">Outras séries que você pode gostar</p>
-          </header>
-
-          <div class="related-grid">
-            <article class="series-card">
-              <div class="card-poster">
-                <img
-                  src="/images/better-call-saul-cover.jpg"
-                  alt="Better Call Saul"
-                  loading="lazy"
-                />
-                <div class="card-overlay">
-                  <button
-                    class="quick-action"
-                    aria-label="Adicionar aos favoritos"
-                  >
-                    ❤️
-                  </button>
-                  <button class="quick-action" aria-label="Adicionar à lista">
-                    📋
-                  </button>
-                </div>
-              </div>
-              <div class="card-content">
-                <h4 class="card-title">Better Call Saul</h4>
-                <div class="card-meta">
-                  <span class="card-genre">Drama</span>
-                  <span class="card-year">2015</span>
-                  <span class="card-rating">⭐ 8.8</span>
-                </div>
-                <p class="card-description">
-                  A história do advogado Jimmy McGill antes de se tornar o
-                  corrupto Saul Goodman, seis anos antes dos eventos de Breaking
-                  Bad.
-                </p>
-              </div>
-              <div class="card-actions">
-                <a
-                  href="/series/better-call-saul"
-                  class="btn btn--primary btn--small"
-                >
-                  Ver Detalhes
-                </a>
-              </div>
-            </article>
-
-            <article class="series-card">
-              <div class="card-poster">
-                <img src="/images/ozark-cover.jpg" alt="Ozark" loading="lazy" />
-                <div class="card-overlay">
-                  <button
-                    class="quick-action"
-                    aria-label="Adicionar aos favoritos"
-                  >
-                    ❤️
-                  </button>
-                  <button class="quick-action" aria-label="Adicionar à lista">
-                    📋
-                  </button>
-                </div>
-              </div>
-              <div class="card-content">
-                <h4 class="card-title">Ozark</h4>
-                <div class="card-meta">
-                  <span class="card-genre">Drama</span>
-                  <span class="card-year">2017</span>
-                  <span class="card-rating">⭐ 8.4</span>
-                </div>
-                <p class="card-description">
-                  Um consultor financeiro é forçado a lavar dinheiro para um
-                  cartel mexicano e muda sua família para os Ozarks.
-                </p>
-              </div>
-              <div class="card-actions">
-                <a href="/series/ozark" class="btn btn--primary btn--small">
-                  Ver Detalhes
-                </a>
-              </div>
-            </article>
-
-            <article class="series-card">
-              <div class="card-poster">
-                <img
-                  src="/images/narcos-cover.jpg"
-                  alt="Narcos"
-                  loading="lazy"
-                />
-                <div class="card-overlay">
-                  <button
-                    class="quick-action"
-                    aria-label="Adicionar aos favoritos"
-                  >
-                    ❤️
-                  </button>
-                  <button class="quick-action" aria-label="Adicionar à lista">
-                    📋
-                  </button>
-                </div>
-              </div>
-              <div class="card-content">
-                <h4 class="card-title">Narcos</h4>
-                <div class="card-meta">
-                  <span class="card-genre">Drama</span>
-                  <span class="card-year">2015</span>
-                  <span class="card-rating">⭐ 8.7</span>
-                </div>
-                <p class="card-description">
-                  A ascensão e queda dos cartéis de drogas colombianos e os
-                  esforços dos agentes da DEA para combatê-los.
-                </p>
-              </div>
-              <div class="card-actions">
-                <a href="/series/narcos" class="btn btn--primary btn--small">
-                  Ver Detalhes
-                </a>
-              </div>
-            </article>
-
-            <article class="series-card">
-              <div class="card-poster">
-                <img
-                  src="/images/the-wire-cover.jpg"
-                  alt="The Wire"
-                  loading="lazy"
-                />
-                <div class="card-overlay">
-                  <button
-                    class="quick-action"
-                    aria-label="Adicionar aos favoritos"
-                  >
-                    ❤️
-                  </button>
-                  <button class="quick-action" aria-label="Adicionar à lista">
-                    📋
-                  </button>
-                </div>
-              </div>
-              <div class="card-content">
-                <h4 class="card-title">The Wire</h4>
-                <div class="card-meta">
-                  <span class="card-genre">Drama</span>
-                  <span class="card-year">2002</span>
-                  <span class="card-rating">⭐ 9.3</span>
-                </div>
-                <p class="card-description">
-                  Uma visão realista e crua da vida urbana em Baltimore através
-                  da perspectiva da polícia e dos criminosos.
-                </p>
-              </div>
-              <div class="card-actions">
-                <a href="/series/the-wire" class="btn btn--primary btn--small">
-                  Ver Detalhes
-                </a>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <!-- Ações de Administração (se aplicável) -->
-        <section class="admin-actions" aria-labelledby="admin-title">
-          <header class="section-header">
-            <h3 id="admin-title" class="section-title">
-              <span class="title-icon">⚙️</span>
-              Ações Administrativas
-            </h3>
-          </header>
-
-          <div class="admin-panel">
-            <div class="admin-info">
-              <p>Você tem permissões administrativas para esta série.</p>
-              <div class="admin-meta">
-                <span class="admin-badge">👤 Criado por: admin_user</span>
-                <span class="admin-badge"
-                  >📅 Última modificação: 22/09/2025</span
-                >
-              </div>
-            </div>
-
-            <div class="admin-buttons">
-              <a href="/series/breaking-bad/editar" class="btn btn--warning">
-                <span class="btn-icon">✏️</span>
-                Editar Série
-              </a>
-
-              <a href="/series/breaking-bad/episodios" class="btn btn--info">
-                <span class="btn-icon">📺</span>
-                Gerenciar Episódios
-              </a>
-
-              <button
-                class="btn btn--secondary"
-                onclick="toggleSeriesVisibility()"
-              >
-                <span class="btn-icon">👁️</span>
-                Tornar Privada
-              </button>
-
-              <a href="/series/breaking-bad/excluir" class="btn btn--danger">
-                <span class="btn-icon">🗑️</span>
-                Excluir Série
-              </a>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <!-- Footer da Página -->
-    <footer class="site-footer" role="contentinfo">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-section">
-            <h4 class="footer-title">Navegação</h4>
-            <ul class="footer-links">
-              <li><a href="/catalogo">Catálogo Completo</a></li>
-              <li><a href="/generos">Explorar Gêneros</a></li>
-              <li><a href="/favoritos">Meus Favoritos</a></li>
-              <li><a href="/listas">Minhas Listas</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-section">
-            <h4 class="footer-title">Comunidade</h4>
-            <ul class="footer-links">
-              <li><a href="/discussoes">Discussões</a></li>
-              <li><a href="/avaliacoes">Avaliações</a></li>
-              <li><a href="/blog">Blog</a></li>
-              <li><a href="/eventos">Eventos</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-section">
-            <h4 class="footer-title">Suporte</h4>
-            <ul class="footer-links">
-              <li><a href="/ajuda">Central de Ajuda</a></li>
-              <li><a href="/contato">Contato</a></li>
-              <li><a href="/reportar">Reportar Problema</a></li>
-              <li><a href="/feedback">Feedback</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <p>&copy; 2025 Plataforma Séries TV. Todos os direitos reservados.</p>
-          <p>Esta página foi visualizada 45,892 vezes.</p>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Modal de Compartilhamento -->
-    <dialog id="shareModal" class="share-modal" aria-labelledby="share-title">
-      <div class="modal-content">
-        <header class="modal-header">
-          <h3 id="share-title" class="modal-title">
-            <span class="modal-icon">📤</span>
-            Compartilhar Breaking Bad
-          </h3>
-          <button
-            class="modal-close"
-            onclick="document.getElementById('shareModal').close()"
-            aria-label="Fechar modal"
-          >
-            ✕
-          </button>
-        </header>
-      </div>
-    </dialog>
-  </body>
-</html>
+// Excluir avaliação
+document.querySelectorAll('[data-delete-review]').forEach(button => {
+    button.addEventListener('click', async () => {
+        if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
+            const reviewId = button.dataset.deleteReview;
+            
+            try {
+                const response = await fetch(`/api/reviews/${reviewId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+                
+                if (response.ok) {
+                    button.closest('.bg-white').remove();
+                    showNotification('Avaliação excluída com sucesso', 'success');
+                }
+            } catch (error) {
+                console.error('Erro ao excluir avaliação:', error);
+                showNotification('Erro ao excluir avaliação', 'error');
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

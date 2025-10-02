@@ -1,6 +1,22 @@
 # models.py
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
+from series.models import Serie
+
+class Review(models.Model):
+    serie = models.ForeignKey(Serie, on_delete=models.CASCADE, related_name='reviews')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
+    texto = models.TextField()
+    avaliacao = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    data_atualizacao = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-data_criacao']
+        unique_together = ('serie', 'usuario')
+
+    def __str__(self):
+        return f'Review de {self.usuario.username} para {self.serie.titulo}'
 
 class Genre(models.Model):
     genre_id = models.AutoField(primary_key=True)
@@ -58,7 +74,7 @@ class Content(models.Model):
     is_trending = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='published')
     
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

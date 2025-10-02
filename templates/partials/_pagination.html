@@ -1,0 +1,48 @@
+{% if is_paginated %}
+<div class="pagination">
+    <!-- Primeira página -->
+    {% if page_obj.has_previous %}
+        <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+           class="page-item" title="Primeira página">
+            <i class="fas fa-angle-double-left"></i>
+        </a>
+        
+        <!-- Página anterior -->
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+           class="page-item">
+            <i class="fas fa-angle-left"></i>
+        </a>
+    {% endif %}
+
+    <!-- Páginas -->
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="page-item active">{{ num }}</span>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+               class="page-item">
+                {{ num }}
+            </a>
+        {% endif %}
+    {% endfor %}
+
+    <!-- Próxima página -->
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+           class="page-item">
+            <i class="fas fa-angle-right"></i>
+        </a>
+        
+        <!-- Última página -->
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+           class="page-item" title="Última página">
+            <i class="fas fa-angle-double-right"></i>
+        </a>
+    {% endif %}
+</div>
+
+<!-- Contador de itens -->
+<div class="text-center text-sm text-gray-600 mt-4">
+    Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ paginator.count }} itens
+</div>
+{% endif %}

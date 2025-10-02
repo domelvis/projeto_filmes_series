@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.urls import reverse
 
 
@@ -51,7 +51,7 @@ class Serie(models.Model):
         null=True
     )
     criado_por = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Criado por',
         help_text='Usuário que criou a série'

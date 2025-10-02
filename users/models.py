@@ -1,7 +1,93 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.utils.translation import gettext_lazy as _
+
+class CustomUser(AbstractUser):
+    """
+    Model de usuário personalizado que herda do AbstractUser do Django.
+    """
+    profile_image = models.ImageField(
+        upload_to='users/profile_images/',
+        null=True,
+        blank=True,
+        verbose_name=_('Foto de Perfil')
+    )
+    bio = models.TextField(
+        max_length=500,
+        blank=True,
+        verbose_name=_('Biografia'),
+        help_text=_('Conte um pouco sobre você')
+    )
+    email_notifications = models.BooleanField(
+        default=True,
+        verbose_name=_('Notificações por E-mail'),
+        help_text=_('Receber notificações por e-mail')
+    )
+    birth_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Data de Nascimento')
+    )
+    website = models.URLField(
+        blank=True,
+        verbose_name=_('Website'),
+        help_text=_('Seu site pessoal ou blog')
+    )
+
+    class Meta:
+        verbose_name = _('usuário')
+        verbose_name_plural = _('usuários')
+        db_table = 'users'
+
+    def __str__(self):
+        return self.get_full_name() or self.username
+
+    def get_full_name(self):
+        """
+        Retorna o nome completo do usuário.
+        """
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return self.username
+
+class UserActivity(models.Model):
+    """
+    Model para registrar atividades do usuário.
+    """
+    ACTIVITY_TYPES = (
+        ('review', _('Review')),
+        ('watched', _('Assistido')),
+        ('wishlist', _('Lista de Desejos')),
+    )
+
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='activities',
+        verbose_name=_('Usuário')
+    )
+    type = models.CharField(
+        max_length=20,
+        choices=ACTIVITY_TYPES,
+        verbose_name=_('Tipo')
+    )
+    description = models.CharField(
+        max_length=255,
+        verbose_name=_('Descrição')
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Data de Criação')
+    )
+
+    class Meta:
+        verbose_name = _('atividade do usuário')
+        verbose_name_plural = _('atividades dos usuários')
+        db_table = 'user_activities'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.get_type_display()} - {self.created_at}"
 
 
 class UserProfile(models.Model):
@@ -9,7 +95,7 @@ class UserProfile(models.Model):
     Model para estender o User padrão do Django com informações adicionais.
     """
     user = models.OneToOneField(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         verbose_name='Usuário'
     )
@@ -56,19 +142,4 @@ class UserProfile(models.Model):
         return self.user.username
 
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    """
-    Cria automaticamente um perfil quando um usuário é criado.
-    """
-    if created:
-        UserProfile.objects.create(user=instance)
 
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    """
-    Salva automaticamente o perfil quando o usuário é salvo.
-    """
-    if hasattr(instance, 'userprofile'):
-        instance.userprofile.save()

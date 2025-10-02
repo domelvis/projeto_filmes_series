@@ -1,0 +1,164 @@
+<!-- Navbar -->
+<nav class="bg-white shadow-sm" x-data="{ mobileMenu: false }">
+    <div class="container-custom py-4">
+        <!-- Desktop Navigation -->
+        <div class="flex justify-between items-center">
+            <!-- Logo e links principais -->
+            <div class="flex items-center space-x-8">
+                <a href="{% url 'home' %}" class="text-2xl font-bold text-primary hover:text-primary-dark transition-colors">
+                    <i class="fas fa-film mr-2"></i>Series & Filmes
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="{% url 'series:list' %}" class="nav-link {% if request.resolver_match.view_name == 'series:list' %}text-primary{% endif %}">
+                        <i class="fas fa-tv mr-1"></i>Séries
+                    </a>
+                    <a href="{% url 'series:favorites' %}" class="nav-link {% if request.resolver_match.view_name == 'series:favorites' %}text-primary{% endif %}">
+                        <i class="fas fa-heart mr-1"></i>Favoritos
+                    </a>
+                    <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.view_name == 'dashboard' %}text-primary{% endif %}">
+                        <i class="fas fa-chart-line mr-1"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Busca -->
+            <div class="hidden md:flex flex-1 max-w-lg mx-8">
+                <div class="relative w-full">
+                    <input type="text" 
+                           id="search-input"
+                           placeholder="Buscar séries..." 
+                           class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    
+                    <!-- Resultados da busca -->
+                    <div id="search-results" 
+                         class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg overflow-hidden z-50 hidden">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Autenticação / Perfil -->
+            <div class="flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                    <!-- Notificações -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" 
+                                class="text-gray-600 hover:text-primary transition-colors relative">
+                            <i class="fas fa-bell text-xl"></i>
+                            {% if unread_notifications %}
+                                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                                    {{ unread_notifications }}
+                                </span>
+                            {% endif %}
+                        </button>
+                        
+                        <!-- Dropdown de notificações -->
+                        <div x-show="open"
+                             @click.away="open = false"
+                             class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-50">
+                            {% if notifications %}
+                                {% for notification in notifications %}
+                                    <a href="{{ notification.url }}" 
+                                       class="block px-4 py-3 hover:bg-gray-50 {% if not notification.read %}bg-blue-50{% endif %}">
+                                        <p class="text-sm text-gray-900">{{ notification.message }}</p>
+                                        <p class="text-xs text-gray-500 mt-1">{{ notification.created_at|timesince }}</p>
+                                    </a>
+                                {% endfor %}
+                                
+                                <div class="px-4 py-2 border-t">
+                                    <a href="{% url 'notifications' %}" class="text-sm text-primary hover:text-primary-dark">
+                                        Ver todas notificações
+                                    </a>
+                                </div>
+                            {% else %}
+                                <p class="px-4 py-2 text-sm text-gray-500">
+                                    Nenhuma notificação ainda.
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Menu do usuário -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" 
+                                class="flex items-center space-x-2 text-gray-700 hover:text-primary">
+                            <img src="{{ user.avatar_url|default:'/static/images/default-avatar.png' }}" 
+                                 alt="{{ user.username }}" 
+                                 class="w-8 h-8 rounded-full object-cover">
+                            <span class="hidden md:inline">{{ user.username }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        
+                        <!-- Dropdown do usuário -->
+                        <div x-show="open"
+                             @click.away="open = false"
+                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                            <a href="{% url 'users:profile' %}" class="block px-4 py-2 hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i>Perfil
+                            </a>
+                            <a href="{% url 'users:settings' %}" class="block px-4 py-2 hover:bg-gray-100">
+                                <i class="fas fa-cog mr-2"></i>Configurações
+                            </a>
+                            {% if user.is_staff %}
+                                <a href="{% url 'admin:index' %}" class="block px-4 py-2 hover:bg-gray-100">
+                                    <i class="fas fa-lock mr-2"></i>Admin
+                                </a>
+                            {% endif %}
+                            <hr class="my-2">
+                            <form action="{% url 'users:logout' %}" method="post" class="block">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="btn-secondary">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+                    </a>
+                    <a href="{% url 'users:register' %}" class="btn-primary hidden md:inline-flex">
+                        <i class="fas fa-user-plus mr-2"></i>Registrar
+                    </a>
+                {% endif %}
+                
+                <!-- Botão do menu mobile -->
+                <button @click="mobileMenu = !mobileMenu" class="md:hidden text-gray-500 hover:text-primary">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Menu mobile -->
+        <div x-show="mobileMenu" class="md:hidden mt-4">
+            <!-- Busca mobile -->
+            <div class="mb-4">
+                <div class="relative">
+                    <input type="text" 
+                           placeholder="Buscar séries..." 
+                           class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <!-- Links de navegação -->
+            <nav class="space-y-4">
+                <a href="{% url 'series:list' %}" class="block nav-link">
+                    <i class="fas fa-tv mr-2"></i>Séries
+                </a>
+                <a href="{% url 'series:favorites' %}" class="block nav-link">
+                    <i class="fas fa-heart mr-2"></i>Favoritos
+                </a>
+                <a href="{% url 'dashboard' %}" class="block nav-link">
+                    <i class="fas fa-chart-line mr-2"></i>Dashboard
+                </a>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'users:register' %}" class="block nav-link">
+                        <i class="fas fa-user-plus mr-2"></i>Registrar
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</nav>

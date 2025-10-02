@@ -1,39 +1,31 @@
-﻿<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <title>{% block title %}Séries TV - Plataforma Completa de Séries e Streaming{% endblock %}</title>
 
-    <meta
-      name="description"
-      content="{% block meta_description %}Descubra, gerencie e compartilhe suas séries favoritas. Catálogo completo com avaliações, discussões e recomendações personalizadas.{% endblock %}"
-    />
-    <meta
-      name="keywords"
-      content="{% block meta_keywords %}sÃ©ries, TV, streaming, catÃ¡logo, avaliaÃ§Ãµes, discussÃµes, plataforma{% endblock %}"
-    />
-    <meta name="author" content="SÃ©ries TV" />
-    <meta
-      name="robots"
-      content="{% block meta_robots %}index, follow{% endblock %}"
-    />
+    <meta name="description" 
+          content="{% block meta_description %}Descubra, gerencie e compartilhe suas séries favoritas. Catálogo completo com avaliações, discussões e recomendações personalizadas.{% endblock %}">
+    <meta name="keywords" 
+          content="{% block meta_keywords %}séries, TV, streaming, catálogo, avaliações, discussões, plataforma{% endblock %}">
+    <meta name="author" content="Séries TV">
+    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
 
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="{% block og_title %}SÃ©ries TV - Plataforma Completa de SÃ©ries{% endblock %}"
-    />
-    <meta
-      property="og:description"
-      content="{% block og_description %}Descubra e compartilhe suas sÃ©ries favoritas em nossa plataforma completa.{% endblock %}"
-    />
-    {% load static %} <meta
-      property="og:image"
-      content="{% block og_image %}{% static 'images/og-image.jpg' %}{% endblock %}"
-    />
-    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-    <meta property="og:site_name" content="SÃ©ries TV" />
+    <meta property="og:type" content="website">
+    <meta property="og:title" 
+          content="{% block og_title %}Séries TV - Plataforma Completa de Séries{% endblock %}">
+    <meta property="og:description" 
+          content="{% block og_description %}Descubra e compartilhe suas séries favoritas em nossa plataforma completa.{% endblock %}">
+    {% load static %}
+    <meta property="og:image" 
+          content="{% block og_image %}{% static 'images/og-image.jpg' %}{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:site_name" content="Séries TV">
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta
@@ -69,35 +61,34 @@
     />
     <link rel="manifest" href="{% static 'site.webmanifest' %}" />
 
-    <link
-      rel="preload"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <link
-      rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <link
-      rel="preload"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
+    <!-- Preload de recursos críticos -->
+    <link rel="preload" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+          as="style" 
+          onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" 
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" 
+          as="style" 
+          onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" 
+          as="style" 
+          onload="this.onload=null;this.rel='stylesheet'">
 
-    <noscript
-      ><link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-    /></noscript>
-    <noscript
-      ><link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-    /></noscript>
+    <!-- Fallback para navegadores sem JavaScript -->
+    <noscript>
+        <link rel="stylesheet" 
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" 
+              href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+        <link rel="stylesheet" 
+              href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    </noscript>
+
+    <!-- Estilos customizados -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/series.css' %}">
+    {% block extra_css %}{% endblock %}
     <noscript
       ><link
         rel="stylesheet"
